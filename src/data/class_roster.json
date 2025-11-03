@@ -1,0 +1,10 @@
+[
+  {
+    "student_id": "s_001",
+    "name": "A. Chen",
+    "mastery": { "photosynthesis_overview": 80, "light_reactions": 45, "calvin_cycle": 38, "limiting_factors": 72 },
+    "flags": ["repeated_misconception:light_reactions"]
+  }
+]
+
+

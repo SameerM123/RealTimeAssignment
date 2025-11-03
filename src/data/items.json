@@ -1,0 +1,16 @@
+[
+  {
+    "id": "q1",
+    "concept_id": "light_reactions",
+    "type": "mcq",
+    "stem": "Where do light reactions occur?",
+    "choices": ["Stroma", "Thylakoid membranes", "Matrix", "Cytosol"],
+    "answer_index": 1,
+    "misconception_key_indexes": [0],
+    "hint_basic": "Think about where chlorophyll sits.",
+    "hint_targeted": "They take place on thylakoid membranes in the chloroplast.",
+    "difficulty": 2
+  }
+]
+
+

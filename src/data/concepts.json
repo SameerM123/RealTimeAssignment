@@ -1,0 +1,36 @@
+[
+  {
+    "id": "photosynthesis_overview",
+    "name": "Photosynthesis Overview",
+    "objective": "Describe purpose and inputs/outputs of photosynthesis.",
+    "prerequisites": [],
+    "common_misconceptions": ["Plants get food from soil", "Light used up"],
+    "sample_items": ["q1", "q2"]
+  },
+  {
+    "id": "light_reactions",
+    "name": "Light Reactions",
+    "objective": "Explain where light reactions occur and their outputs.",
+    "prerequisites": ["photosynthesis_overview"],
+    "common_misconceptions": ["They occur in the stroma"],
+    "sample_items": ["q1"]
+  },
+  {
+    "id": "calvin_cycle",
+    "name": "Calvin Cycle",
+    "objective": "Explain carbon fixation and products.",
+    "prerequisites": ["light_reactions"],
+    "common_misconceptions": ["Glucose directly produced"],
+    "sample_items": []
+  },
+  {
+    "id": "limiting_factors",
+    "name": "Limiting Factors",
+    "objective": "Identify factors limiting photosynthesis.",
+    "prerequisites": ["photosynthesis_overview"],
+    "common_misconceptions": [],
+    "sample_items": []
+  }
+]
+
+

@@ -1,0 +1,15 @@
+{
+  "student_id": "demo_student",
+  "mastery_by_concept": { "photosynthesis_overview": 55, "light_reactions": 42, "calvin_cycle": 30, "limiting_factors": 70 },
+  "recent_events": [
+    {"ts": "2025-10-20T10:00:00Z", "type": "wrong", "concept": "light_reactions", "tag": "misconception:stroma"},
+    {"ts": "2025-10-20T10:02:00Z", "type": "hint_basic", "concept": "light_reactions"}
+  ],
+  "spaced_plan": [
+    {"concept": "light_reactions", "date": "2025-10-21", "reason": "weak"},
+    {"concept": "light_reactions", "date": "2025-10-23", "reason": "weak"},
+    {"concept": "light_reactions", "date": "2025-10-27", "reason": "verify"}
+  ]
+}
+
+
