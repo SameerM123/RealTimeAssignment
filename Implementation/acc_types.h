@@ -42,3 +42,4 @@ extern volatile bool actuator_beat;
 
 #endif // ACC_TYPES_H
 
+

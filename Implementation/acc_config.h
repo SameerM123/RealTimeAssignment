@@ -24,8 +24,8 @@
 #define STK_SIZE_SETUP        512     // Soft task
 
 // Timing Constants (in milliseconds)
-#define TIMER_PERIOD_MS       50      // T_ISR = 50ms
-#define CONTROL_TIMEOUT_MS    45      // Timeout < T_ISR (45ms)
+#define TIMER_PERIOD_MS       100     // T_ISR = 100ms (matches figure/rubric)
+#define CONTROL_TIMEOUT_MS    90      // Timeout < T_ISR (90ms)
 #define DISPLAY_PERIOD_MS     2000    // 2 seconds
 
 // Event Flag Bits
@@ -36,4 +36,5 @@
 #define FAULT_DETECTED_FLAG   (OS_FLAGS)0x10
 
 #endif // ACC_CONFIG_H
+
 

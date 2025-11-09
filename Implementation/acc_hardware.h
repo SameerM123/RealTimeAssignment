@@ -18,3 +18,4 @@ void LCD_Display_ACC_Status(uint8_t status);
 
 #endif // ACC_HARDWARE_H
 
+

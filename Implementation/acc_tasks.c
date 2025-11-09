@@ -74,7 +74,7 @@ void Control_Task(void *p_arg)
     while(1)
     {
         // Wait for signal from Sensors task (with timeout in ticks)
-        OSTaskSemPend(MS_TO_TICKS(CONTROL_TIMEOUT_MS),  // Timeout = 45ms < T_ISR (50ms)
+        OSTaskSemPend(MS_TO_TICKS(CONTROL_TIMEOUT_MS),  // Timeout = 90ms < T_ISR (100ms)
                      OS_OPT_PEND_BLOCKING,
                      &ts,
                      &err);

@@ -92,7 +92,7 @@ int main(void)
     
     // 6. Create and start watchdog timer (after tasks are ready)
     OSTmrCreate(&WatchdogTimer, "WD Timer", 0,
-                MS_TO_TICKS(50), OS_OPT_TMR_PERIODIC,
+                MS_TO_TICKS(100), OS_OPT_TMR_PERIODIC,  // Period = 100ms (matches timer period)
                 Watchdog_Timer_Callback, NULL, &err);
     
     OSTmrStart(&WatchdogTimer, &err);

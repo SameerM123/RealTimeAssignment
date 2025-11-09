@@ -61,19 +61,19 @@ Before compiling, ensure `os_cfg.h` has the following enabled:
 ## Priority Justification
 
 - **Sensors (8)**: Highest among hard tasks - must complete data acquisition before next timer interrupt
-- **Control (9)**: Middle priority - depends on Sensors completion, must finish calculations within 50ms
-- **Actuator (10)**: Lowest among hard tasks - depends on Control completion, applies output within 50ms
+- **Control (9)**: Middle priority - depends on Sensors completion, must finish calculations within 100ms
+- **Actuator (10)**: Lowest among hard tasks - depends on Control completion, applies output within 100ms
 - **Display (20)**: Soft real-time - can tolerate delays
 - **Setup (21)**: Event-driven - non-critical initialization
 
-Priority ordering ensures: read completes before compute; compute completes before apply—within the same 50ms frame.
+Priority ordering ensures: read completes before compute; compute completes before apply—within the same 100ms frame.
 
 ## Timing Constraints
 
 - **OS Tick**: 10ms
-- **Timer Period (T_ISR)**: 50ms
-- **Control Cycle**: ≤ 50ms (all hard tasks)
-- **Control Timeout**: 45ms (deadline miss detection)
+- **Timer Period (T_ISR)**: 100ms (matches figure/rubric)
+- **Control Cycle**: ≤ 100ms (all hard tasks)
+- **Control Timeout**: 90ms (deadline miss detection)
 - **Display Period**: 2000ms (2 seconds)
 
 ## Notes
@@ -93,4 +93,5 @@ This code requires µC/OS-III kernel headers and libraries. Include all source f
 - Week 3, 4, 5 lecture notes on µC/OS-III
 - Requirement 4 Plan document
 - µC/OS-III API documentation
+
 
