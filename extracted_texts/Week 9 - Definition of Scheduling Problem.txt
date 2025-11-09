@@ -1,0 +1,842 @@
+
+--- Page 1 ---
+Definition of Scheduling Problem (Section 2.3)
+• A scheduling problem is defined using 3 sets:
+• a set of n tasks Γ = {τ1, τ2, . . . , τn},
+• a set of m processors P = {P1, P2, . . . , Pm} and
+• a set of s types of resources R = {R1,R2, . . . , Rs}.
+• In addition, precedence relations among tasks can be specified through a 
+directed acyclic graph, and timing constraints can be associated with each 
+task.
+• In this context, scheduling means assigning processors from P and 
+resources from R to tasks from Γ in order to complete all tasks under 
+the specified constraints
+• This problem, in its general form, has been shown to be NP-complete
+and as a result computationally intractable
+Week 9 - Definition of Scheduling Problem
+1
+
+--- Page 2 ---
+Week 9 - Definition of Scheduling Problem
+Complexity of Scheduling Algorithms
+• In dynamic real time systems, scheduling decisions must be 
+taken on line during task execution
+• A polynomial algorithm is one whose time complexity grows 
+as a polynomial function p of the input length n of an 
+instance
+• The complexity of such algorithms is denoted by O(p(n))
+• Each algorithm whose complexity function cannot be 
+bounded in polynomial way is called an exponential time 
+algorithm
+2
+
+--- Page 3 ---
+Week 9 - Definition of Scheduling Problem
+Example of Polynomial and Exponential Time 
+Algorithms
+• Let us consider two algorithms with complexity functions n 
+and 5n, respectively, and let us assume that an elementary 
+step for these algorithms lasts 1 μs.
+• If the input length of the instance is n = 30:
+• Polynomial algorithm solved the problem in 30 μs
+• Exponential algorithm needs about 3 · 105 centuries to solve the 
+problem
+3
+
+--- Page 4 ---
+Week 9 - Definition of Scheduling Problem
+Real-Time Scheduling Objective
+• One of the research objectives in real-time scheduling is to
+identify simpler, but still practical, problems that can be solved in 
+polynomial time.
+• Some possible steps to reduce the complexity of constructing a 
+feasible schedule are:
+• simplify the computer architecture (for example, by restricting to the 
+case of uniprocessor system),
+• adopt a preemptive model,
+• use fixed priorities,
+• remove precedence and/or resource constraints,
+• assume simultaneous task activation,
+• Assume homogeneous task sets (solely periodic or solely aperiodic 
+activities),
+• etc.
+4
+
+--- Page 5 ---
+Week 9 - Definition of Scheduling Problem
+Classification of Scheduling Algorithms
+Main classes of scheduling algorithms:
+• Preemptive vs non-preemptive
+• In preemptive algorithms, the running task can be 
+interrupted at any time to assign the processor to another 
+active task, according to a predefined scheduling policy
+• In non-preemptive algorithms, a task, once started, is 
+executed by the processor until completion. In this case, all 
+scheduling decisions are taken as the task terminates its 
+execution
+5
+
+--- Page 6 ---
+Week 9 - Definition of Scheduling Problem
+Classification of Scheduling Algorithms
+Main classes of scheduling algorithms:
+• Static vs dynamic
+• Static algorithms are those in which scheduling decisions 
+are based on fixed parameters, assigned to tasks before 
+their activation.
+• Dynamic algorithms are those in which scheduling decisions 
+are based on dynamic parameters that may change during 
+system evolution
+6
+
+--- Page 7 ---
+Week 9 - Definition of Scheduling Problem
+Classification of Scheduling Algorithms
+Main classes of scheduling algorithms:
+• Off-line vs online
+• A scheduling algorithm is used off line if it is executed on 
+the entire task set before tasks activation. The schedule 
+generated in this way is stored in a table and later executed 
+by a dispatcher.
+• A scheduling algorithm is used online if scheduling decisions 
+are taken at runtime every time a new task enters the 
+system or when a running task terminates.
+7
+
+--- Page 8 ---
+Week 9 - Definition of Scheduling Problem
+Classification of Scheduling Algorithms
+Main classes of scheduling algorithms:
+• Optimal vs. Heuristic.
+• An algorithm is said to be optimal if it minimizes some given 
+cost function defined over the task set. When no cost 
+function is defined and the only concern is to achieve a 
+feasible schedule, then an algorithm is said to be optimal if it 
+is able to find a feasible schedule, if one exists.
+• An algorithm is said to be heuristic if it is guided by a 
+heuristic function in taking its scheduling decisions. A 
+heuristic algorithm tends toward the optimal schedule, but 
+does not guarantee finding it
+8
+
+--- Page 9 ---
+Week 9 - Definition of Scheduling Problem
+Guarantee-Based Algorithms
+• In hard real-time applications that require highly predictable
+behavior, the feasibility of the schedule should be guaranteed in 
+advance; that is, before task execution
+• The system must plan its actions by looking ahead in the future 
+and by assuming a worst-case scenario
+• In static real-time systems, where the task set is fixed and known
+a priori, all task activations can be precalculated off line, and the
+entire schedule can be stored in a table that contains all 
+guaranteed tasks arranged in the proper order
+• In dynamic real-time systems (typically consisting of firm tasks),
+tasks can be created at runtime; hence the guarantee must be 
+done online every time a new task is created
+9
+
+--- Page 10 ---
+Scheme of Guarantee Mechanism for Dynamic 
+Systems, Online Guarantee Test
+• If Γ is the current task set that has been previously guaranteed, a newly 
+arrived task τnew is accepted into the system if and only if the task set Γ' = 
+Γ {τnew} is found schedulable.
+• If Γ' is not schedulable, then task τnew is rejected to preserve the feasibility 
+of the current task set
+• Implementing a guaranteed mechanism will deter potential system 
+overload situations, such as transient overload, and avoid negative effects
+Week 9 - Definition of Scheduling Problem
+10
+
+--- Page 11 ---
+Transient Overload
+• One problematic scenario 
+caused by transient 
+overload is called domino 
+effect:
+• The arrival of a new task 
+causes all previously 
+guaranteed tasks to miss 
+their deadlines.
+A guaranteed mechanism will allow us to 
+detect these potential overload situations
+Week 9 - Definition of Scheduling Problem
+11
+
+--- Page 12 ---
+Week 9 - Definition of Scheduling Problem
+Best-Effort Algorithms
+• To efficiently support soft real-time applications that do not 
+have hard timing requirements, a best-effort approach may 
+be adopted for scheduling
+• A best-effort scheduling algorithm tries to “do its best” to 
+meet deadlines, but there is no guarantee of finding a 
+feasible schedule
+• In best-effort algorithms a task is aborted only under real 
+overload conditions; as a result these algorithms could 
+perform better than guarantee-based schemes
+12
+
+--- Page 13 ---
+Metrics for Performance 
+Evaluation
+• Evaluating the performance of a 
+scheduling algorithms – typically 
+done through a cost function defined 
+over the task set
+• Classical scheduling algorithms try to 
+minimize functions such as:
+• The metric used in the scheduling 
+algorithm has implications on the 
+performance of the real-time system
+Week 9 - Definition of Scheduling Problem
+13
+
+--- Page 14 ---
+Lateness Criteria
+• Minimizing the 
+maximum lateness can 
+be useful
+• But, in general, minimizing 
+the maximum lateness does 
+not minimize the number of 
+tasks that miss their 
+deadlines and does not 
+necessarily prevent one or 
+more tasks from missing 
+their deadline
+• See example
+Week 9 - Definition of Scheduling Problem
+14
+
+--- Page 15 ---
+Typical Utility 
+Functions
+• Utility function – will 
+describe the benefit of 
+executing a task related 
+to its completion time
+• When utility functions are 
+defined on tasks, the 
+performance of the 
+scheduling algorithm can 
+be measured by the 
+cumulative value
+Week 9 - Definition of Scheduling Problem
+15
+
+--- Page 16 ---
+Week 9 - Definition of Scheduling Problem
+Scheduling Anomalies
+• We will just enumerate some scheduling anomalies that you 
+should be aware about:
+1. If tasks have deadlines, then adding resources (for example, an extra 
+processor) or relaxing constraints (less precedence among tasks or 
+fewer execution times requirements) can actually make things worse
+2. Reducing the computation time of each task will not
+necessarily improve the global completion time
+3. Weakening precedence constraints will not necessarily improve 
+the global completion time
+4. In the presence of shared resources, the schedule length of a task 
+set can increase when reducing tasks’ computation times
+5. Increasing the computation speed of tasks in a non-preemptive 
+kernel will not necessarily optimize the global completion time.
+16
+
+--- Page 17 ---
+Week 9 - Definition of Scheduling Problem
+Homework
+• Exercises 2.1 to 2.5 on page 51 in the textbook
+• Solutions are presented in Chapter 13 of the book
+17
+
+--- Page 18 ---
+Week 9 - Definition of Scheduling Problem
+Aperiodic Task Scheduling (Chapter 3)
+• We present various algorithms for scheduling real-time aperiodic 
+tasks on a single machine environment
+• Each algorithm represents a solution for a particular scheduling
+problem, which is expressed through a set of assumptions on the 
+task set and by an optimality criterion to be used on the schedule
+• Many of these algorithms can be extended to work on multi- 
+processor or distributed architectures
+• Algorithms presented in this section are:
+• Jackson’s algorithm
+• Horn’s algorithm
+• Non-preemptive scheduling algorithms
+• Scheduling algorithms with precedence constraints
+18
+
+--- Page 19 ---
+Systematic Notation
+To facilitate the description of the scheduling problems presented we 
+introduce a systematic notation which classifies all algorithms using 
+three fields α | β | γ, having the following meaning:
+Week 9 - Definition of Scheduling Problem
+19
+
+--- Page 20 ---
+Notation Examples
+Week 9 - Definition of Scheduling Problem
+20
+
+--- Page 21 ---
+Scheduling Problem
+• The problem considered by this algorithm is 1 | sync | Lmax.
+• All tasks consist of a single job, have synchronous arrival times, 
+but can have different computation times and deadlines.
+• Also, task must be independent.
+Week 9 - Definition of Scheduling Problem
+21
+
+--- Page 22 ---
+Week 9 - Definition of Scheduling Problem
+Jackson’s Algorithm
+• A simple algorithm that solves this problem was found by 
+Jackson in 1955. It is called Earliest Due Date (EDD) and can be 
+expressed by the following rule:
+• Theorem (Jackson’s rule): Given a set of n independent tasks, any 
+algorithm that executes the tasks in order of nondecreasing 
+deadlines is optimal with respect to minimizing the maximum 
+lateness.
+• The complexity required by Jackson’s algorithm to build the 
+optimal schedule is due to the procedure that sorts the tasks by 
+increasing deadlines.
+• As a result, if the task set consists of n tasks, the complexity of the EDD 
+algorithm is O(n log n).
+22
+
+--- Page 23 ---
+Proof of theorem: … in class work …
+Week 9 - Definition of Scheduling Problem
+23
+
+--- Page 24 ---
+Example 1
+Consider a set of 5 tasks, 
+simultaneously activated 
+at time t = 0; …
+Week 9 - Definition of Scheduling Problem
+24
+
+--- Page 25 ---
+Week 9 - Definition of Scheduling Problem
+EDD Optimality and Task Schedule Feasibility
+• Note that the optimality of the EDD algorithm cannot 
+guarantee the feasibility of the schedule for any task set.
+• EDD only guarantees that if a feasible schedule exists for a 
+task set, then it will find it.
+25
+
+--- Page 26 ---
+Example 2
+This example task set 
+cannot be feasibly 
+scheduled …
+Week 9 - Definition of Scheduling Problem
+26
+
+--- Page 27 ---
+EDD Schedulability Guarantee (See pp. 58)
+• To guarantee that a set of task can be feasibly scheduled by 
+EDD algorithm we need to show that in the worst-case 
+scenario all tasks can complete before their deadlines:
+i = 1, . . . , n fi ≤ di
+• If fact, for a random set of n tasks we can assume that the 
+tasks are denoted by their increasing deadlines starting with
+J1, J2, …, Jn; such that: d1< d2 < …< dn
+• Then, the guarantee test can be performed by verifying the n 
+conditions for the worst-case finishing times of all tasks:
+i= 1, . . . , n;
+i
+k=1 k 
+i
+Week 9 - Definition of Scheduling Problem
+27
+
+--- Page 28 ---
+Week 9 - Definition of Scheduling Problem
+Early Deadline First (EDF)/Horn’s Algorithm
+• Horn algorithm: solves the problem of scheduling a set of n 
+independent tasks on a uniprocessor system, when tasks 
+may have dynamic arrivals and preemption is allowed (1 | 
+preem | Lmax) – the algorithm is also called Earliest Deadline 
+First (EDF).
+• Theorem (Horn): Given a set of n independent tasks with 
+arbitrary arrival times, any algorithm that at any instant 
+executes the task with the earliest absolute deadline among 
+all the ready tasks is optimal with respect to minimizing the 
+maximum lateness Lmax.
+28
+
+--- Page 29 ---
+Week 9 - Definition of Scheduling Problem
+EDF Optimality
+EDF is optimal in the sense of feasibility -- if there exists a feasible schedule for a 
+task set J, then EDF can find it.
+• The proof can easily be extended to show that EDF also minimizes the maximum 
+lateness. Proof of optimality of the EDF algorithm, see pp. 59-61.
+• For the proof we divide the schedule into time slices of one unit of time each
+Notations:
+σ – a schedule produced by a generic algorithm A 
+σEDF – the schedule obtained by the EDF algorithm
+σ(t) identifies the task executing in the time slice [t, t + 1)
+E(t) identifies the ready task that, at time t, has the earliest deadline.
+tE(t) is the time (≥ t) at which the next slice of task E(t) begins its execution in the 
+current schedule.
+29
+
+--- Page 30 ---
+EDF Optimality Proof
+• If σ ≠ σEDF , then in σ there exists a time t such that σ(t) ≠ E(t).
+• The basic idea used in the proof is that interchanging the 
+position of σ(t) and E(t), in the above situation, cannot 
+increase the maximum lateness.
+• If the schedule σ starts at time t = 0 and D is the latest 
+deadline of the task set:
+=> σEDF can be obtained from σ by at most D transpositions
+Week 9 - Definition of Scheduling Problem
+30
+
+--- Page 31 ---
+EDF Optimality Proof
+For each time slice t, do:
+• Is the task σ(t) scheduled in the 
+slice t the one with the earliest 
+deadline, E(t).
+• YES: do nothing
+• NO: exchange the slice of task 
+E(t) as anticipated at time t 
+and postpone the slice of task 
+σ(t) to time tE.
+Similarly with Jackson’s theorem 
+proof, it can be shown that after each 
+transposition the maximum lateness 
+cannot increase;
+=> therefore, EDF is optimal.
+Week 9 - Definition of Scheduling Problem
+31
+
+--- Page 32 ---
+EDF Optimality Proof: Example of 
+Applying Interchange Algorithm 
+to a Schedule
+In class work …
+Week 9 - Definition of Scheduling Problem
+32
+
+--- Page 33 ---
+EDF Example
+5 tasks set
+EDF schedule
+Week 9 - Definition of Scheduling Problem
+Explain …
+33
+
+--- Page 34 ---
+EDF Feasibility Guarantee Criteria (See pp. 63)
+• When tasks have dynamic activations and the arrival times 
+are not known a priori, the guaranteed test must be done 
+dynamically, whenever a new task enters the system.
+• Let J be the current set of active tasks, which have been 
+previously guaranteed, and let Jnew be a newly arrived task.
+• In order to accept Jnew in the system we must guarantee that the 
+new task set J’ = J {Jnew} is also schedulable.
+• Without loss of generality, we can assume that all tasks in J’ 
+(including Jnew) are ordered by increasing deadlines, so that 
+J1 is the task with the earliest deadline.
+Week 9 - Definition of Scheduling Problem
+34
+
+--- Page 35 ---
+Week 9 - Definition of Scheduling Problem
+Guarantee Test Conditions … in class work …
+35
+
+--- Page 36 ---
+EDF Guarantee Algorithm
+Week 9 - Definition of Scheduling Problem
+36
+
+--- Page 37 ---
+Week 9 - Definition of Scheduling Problem
+Non-Preemptive Scheduling
+• When preemption is not allowed and tasks can have 
+arbitrary arrivals, the problem of minimizing the maximum 
+lateness and the problem of finding a feasible schedule 
+become NP-hard
+• It can be shown that EDF is no longer optimal if tasks cannot 
+be preempted during their execution
+37
+
+--- Page 38 ---
+This example shows that 
+EDF algorithm does not 
+find the optimal schedule 
+when preemption is not 
+allowed even though a 
+feasible schedule exists for 
+that task set (see Figure a).
+Why? …
+Week 9 - Definition of Scheduling Problem
+EDF Example for Non- 
+Preemptive Model
+38
+
+--- Page 39 ---
+Week 9 - Definition of Scheduling Problem
+Non-Idle Algorithm
+• In the optimal schedule shown in previous slide the processor 
+remains idle in the interval [0, 1) although J1 is ready to execute.
+• If arrival times are not known a priori, then no online algorithm can 
+decide whether to stay idle at time 0 or execute task J1.
+• A scheduling algorithm that does not permit the processor to be 
+idle when there are active jobs is called a non-idle algorithm.
+• When arrival times are known a priori, non-preemptive 
+scheduling problems are usually treated by branch-and-bound 
+algorithm that performs well in the average case
+39
+
+--- Page 40 ---
+Non-Preemptive 
+Schedule Search 
+Tree
+At each step of the 
+search, the partial 
+schedule associated 
+with a vertex is 
+extended by inserting a 
+new task. For n number 
+of tasks in the set:
+Week 9 - Definition of Scheduling Problem
+•
+Path length = n
+•
+Nr. of leaves = n!
+Tree search complexity
+??
+Note: arrival times are known a priori – search tree space.
+Algorithm goal: search for a leaf corresponding to a feasible schedule.
+-> the root is an empty schedule,
+-> an intermediate vertex is a partial schedule,
+-> a terminal vertex (leaf) is a complete schedule, feasible or non-feasible
+40
+
+--- Page 41 ---
+Week 9 - Definition of Scheduling Problem
+Non-Preemptive Scheduling Algorithms
+• We see that an exhaustive search through the search tree space 
+in the previous slide has a complexity of O(n·n!) which is 
+computationally intractable
+• The objective of the algorithms presented is to limit the search 
+space and reduce the computational complexity of the algorithm
+• BRATLEY’S ALGORITHM
+• uses additional information to prune the tree and reduce the complexity in the 
+average case.
+• THE SPRING ALGORITHM
+• adopts suitable heuristics to follow promising paths on the tree and build a 
+complete schedule in polynomial time
+41
+
+--- Page 42 ---
+Week 9 - Definition of Scheduling Problem
+BRATLEY’S ALGORITHM (1 | NO PREEM | 
+FEASIBLE)
+• The algorithm solves the problem of finding a feasible 
+schedule of a set of non-preemptive tasks with arbitrary 
+arrival times, utilizing the search tree space.
+• Start with an empty schedule and,
+• At each step of the search, visits a new vertex in the search tree 
+space and add a task in the partial schedule.
+• Pruning technique applied -- a branch is abandoned when:
+• the addition of any node to the current path causes a missed deadline;
+• a feasible schedule is found at the current path.
+42
+
+--- Page 43 ---
+loped by Radu Muresan, F22 
+508
+Example of search 
+performed by Bratley’s 
+algorithm
+ENGG4420: Deve
+… Tasks set …
+… Notations …
+… Start with an empty schedule
+… Extend the empty schedule …
+… Prune if conditions met…
+… Continue by extending and 
+pruning until a feasible schedule 
+is found or the search 
+exhausted the entire tree space.
+Week 9 - Definition of Scheduling Problem
+43
+
+--- Page 44 ---
+Week 9 - Definition of Scheduling Problem
+Bratley Algorithm Usage
+• Pruning techniques are effective for reducing the search space. 
+Nevertheless, the worst-case complexity of the algorithm is still 
+O(n · n!).
+• For this reason, Bratley’s algorithm can only be used in off-line mode, 
+when all task parameters (including the arrival times) are known in 
+advance.
+• Example of usage -- in a time-triggered system
+• Tasks are activated at predefined instants by a timer process.
+• The resulting schedule produced by Bratley’s algorithm can be stored in 
+a data structure, called task activation list.
+• Then, at run time, a dispatcher simply extracts the next task from the 
+activation list and puts it in execution.
+44
+
+--- Page 45 ---
+Week 9 - Definition of Scheduling Problem
+THE SPRING ALGORITHM
+• Objective -- find a feasible schedule when tasks have different types of 
+constraints, such as precedence relations, resource constraints, arbitrary 
+arrivals, non-preemptive properties, and importance levels.
+• The Spring algorithm is used in a distributed computer architecture and 
+can also be extended to include fault-tolerance requirements.
+• How does the algorithm reduce the tree search space complexity?
+• The search is driven by a heuristic function H, which actively directs the 
+scheduling to a plausible path
+• On each level of the search, function H is applied to each of the tasks that 
+remain to be scheduled.
+• The task with the smallest value determined by the heuristic function H is 
+selected to extend the current schedule.
+45
+
+--- Page 46 ---
+Week 9 - Definition of Scheduling Problem
+The Heuristic Function
+• The heuristic function H, is a flexible mechanism used to 
+define and modify the scheduling policy of the kernel.
+• Remember-- the task with the smallest value determined by the 
+heuristic function H is selected to extend the current schedule
+• Examples of H functions
+• if H = ai (arrival time) the algorithm behaves as First Come First 
+Served;
+• if H = Ci (computation time) it works as Shortest Job First,
+• If H = di (deadline) the algorithm is equivalent to Earliest Deadline 
+First.
+46
+
+--- Page 47 ---
+Considering Resource Constraints in the 
+Scheduling Algorithm
+How can we include resource constraints in the scheduling algorithm? 
+Solution: each task Ji will include a binary array of resources
+Ri = [R1(i), . . . , Rr(i)],
+• Where Rk(i) = 0 if Ji does not use resource Rk, Rk(i) = 1 if Ji uses Rk in exclusive mode.
+• Given a partial schedule, the algorithm determines, for each resource
+Rk, the earliest time the resource is available. This time is denoted as 
+EATk (Earliest Available Time).
+• Thus, the earliest start time that a task Ji can begin the execution 
+without blocking on shared resources is:
+est 
+i
+k
+k
+; where, ai is the arrival time of Ji.
+Week 9 - Definition of Scheduling Problem
+• Once Test is calculated for all the tasks, a possible search strategy is to 
+select the task with the smallest value of Test.
+47
+
+--- Page 48 ---
+Simple and Composed Heuristic Functions in 
+Spring Algorithm
+• Composed heuristic 
+functions can also be used 
+to integrate relevant 
+information on the tasks, 
+such as
+• H = d +W · C
+• H = d +W · Test,
+• Where, W is a weight that 
+can be adjusted for 
+different application 
+environments
+Week 9 - Definition of Scheduling Problem
+48
+
+--- Page 49 ---
+Week 9 - Definition of Scheduling Problem
+Handling Precedence Constraints in the 
+Scheduling Algorithm
+How do we include precedence constraints?
+Solution: a factor E, called eligibility, is added to the heuristic 
+function.
+• A task becomes eligible to execute (Ei = 1) only when all its 
+ancestors in the precedence graph are completed.
+• If a task is not eligible, then Ei = ∞; hence, it cannot be 
+selected for extending a partial schedule.
+49
+
+--- Page 50 ---
+Week 9 - Definition of Scheduling Problem
+Spring Algorithm Mechanism
+Starting with a partial schedule, the algorithm extends the partial
+schedule and determines whether the current schedule is strongly
+feasible (?) … remains feasible by extending with the remaining 
+tasks …
+• If this partial schedule is not to be strongly feasible, the algorithm stops 
+the search process,
+• Otherwise the search continues until a complete feasible schedule is 
+met.
+• Since a feasible schedule is reached through n nodes and each
+partial schedule requires the evaluation of most n heuristic 
+functions, the complexity of the Spring algorithm is O(n2).
+• Backtracking can be used to continue the search after a failure …
+• Disadvantage: the Spring algorithm is not optimal
+50
+
+--- Page 51 ---
+Week 9 - Definition of Scheduling Problem
+Scheduling with Precedence Constraints
+• The problem of finding an optimal schedule for a set of tasks 
+with precedence relations is in general NP-hard.
+• Optimal algorithms that solve the problem in polynomial 
+time can be found under particular assumptions on the 
+tasks. We present two algorithms:
+• LATEST DEADLINE FIRST (1 | PREC,SYNC | LMAX)
+• EDF with precedence constraints (1 | PREC,PREEM | LMAX)
+51
+
+--- Page 52 ---
+Week 9 - Definition of Scheduling Problem
+LATEST DEADLINE FIRST (1 | PREC,SYNC | LMAX)
+• Or, LDF algorithm, can be executed in polynomial time
+• Given a set J of n tasks and a directed acyclic graph (DAG) 
+describing their precedence relations, LDF builds the 
+scheduling queue from tail to head:
+PROCEDURE: among the tasks without successors or whose 
+successors have been all selected, LDF selects the task with the 
+latest deadline to be scheduled last. This procedure is repeated until 
+all tasks in the set are selected.
+• At run time, tasks are executed in order from the queue
+• See proof of LDF optimality in the reference book (pp 71-72)
+52
+
+--- Page 53 ---
+LDF Example
+• … task set …
+• … precedence graph …
+• LDF schedule → optimal 
+under the precedence 
+constraints
+• EDF schedule → not 
+optimal under 
+precedence constraints,
+• Lmax(EDF) > Lmax(LDF)
+Week 9 - Definition of Scheduling Problem
+53
+
+--- Page 54 ---
+EDF WITH PRECEDENCE CONSTRAINTS (1 | 
+PREC, PREEM | LMAX)
+• The problem of scheduling a set of n tasks with precedence 
+constraints and dynamic activations can be solved in 
+polynomial time complexity only if tasks are preemptable
+• Algorithm: the basic idea is to transform a set J of dependent 
+tasks into a set J of independent tasks by an adequate 
+modification of timing parameters. Then, tasks are scheduled 
+by the Earliest Deadline First (EDF) algorithm.
+• Transformation algorithm …
+• EDF …
+Week 9 - Definition of Scheduling Problem
+54
+
+--- Page 55 ---
+Modification 
+Rule for the 
+Release 
+Times
+Precedence 
+constraint: 
+Ja → Jb
+… start times …
+… replace the 
+release time rb 
+by: max(rb, ra + 
+Ca) …
+Week 9 - Definition of Scheduling Problem
+55
+
+--- Page 56 ---
+Algorithm To Modify the Release Times
+b
+Let ∗ be the new release time of Jb
+Week 9 - Definition of Scheduling Problem
+56
+
+--- Page 57 ---
+Modification 
+Rule for the 
+Deadlines
+Precedence 
+constraint:
+Ja → Jb
+… finish times…
+… replace 
+deadline da by: 
+min(da, db -
+Cb) …
+Week 9 - Definition of Scheduling Problem
+57
+
+--- Page 58 ---
+Algorithm to Modify the Deadlines
+b
+Let 
+∗ be the new deadline time of Jb
+Week 9 - Definition of Scheduling Problem
+58
+
+--- Page 59 ---
+Week 9 - Definition of Scheduling Problem
+Proof of Optimality
+• The transformation algorithm ensures that if a feasible schedule 
+exists for the modified task set J∗ under EDF, then the original 
+task set J is also schedulable; that is, all tasks in J meet both 
+precedence and timing constraints
+• In fact, if J∗ is schedulable, all modified tasks start at or after time 
+r∗i and are completed at or before time d∗i .
+i 
+i
+• Since r∗ ≥ ri and d∗ ≤ di, the schedulability of J∗ implies that J is also
+schedulable.
+• However, we need to show that the precedence constraints in J 
+are not violated
+59
+
+--- Page 60 ---
+Proof of 
+Optimality
+Case analysis: J1 must precede 
+J2 (i.e., J1 → J2), but J2 arrives 
+before J1 and has an earlier 
+deadline.
+Clearly, if the two tasks are 
+executed under EDF, their 
+precedence relation cannot be 
+met.
+However, if we apply the 
+transformation algorithm, the 
+time constraints are modified 
+as shown … discuss …
+Week 9 - Definition of Scheduling Problem
+60
+
+--- Page 61 ---
+Summary of Algorithms for Aperiodic Tasks
+Week 9 - Definition of Scheduling Problem
+61
+
+--- Page 62 ---
+Week 9 - Definition of Scheduling Problem
+Homework
+• Exercises 3.1 to 3.5 pages 77-78 in the textbook (Solutions on 
+pp 460-461)
+62

@@ -1,0 +1,929 @@
+
+--- Page 1 ---
+Didactic C Kernel: Chapter 10 of Hard Real-Time 
+Computing Systems By Giorgio C. Buttazzo
+This chapter presents a hard-real-time kernel for critical control 
+applications and covers:
+• Basic issues to be considered during the design and the 
+development of such kernel
+• The structure and the main components for this small real-time 
+kernel, called DICK (DIdactic C Kernel)
+• The problem of time predictable inter-task communication
+• A particular communication mechanism for exchanging state 
+messages among periodic tasks is illustrated
+• Evaluating the runtime overhead of the kernel for schedulability 
+analysis
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+1
+
+--- Page 2 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Structure of a Real-Time Kernel
+• A kernel usually provides the following basic activities:
+• Process management – includes various supporting functions
+• Process creation and termination, job scheduling, dispatching, context 
+switching etc.
+• Interrupt handling service – provides service to interrupt requests
+• The service consists in the execution of a dedicated routine (driver) that 
+will transfer data from the device to the main memory (or vice versa).
+• In a real-time system, the interrupt handling mechanism must be 
+integrated with the scheduling mechanism
+• Process synchronization and communication – basic mechanism
+• In order to achieve predictability, a real-time kernel must provide special 
+types of semaphores that support a resource access protocol (such as 
+Priority Inheritance, Priority Ceiling, or Stack Resource Policy) for avoiding 
+unbounded priority inversion
+2
+
+--- Page 3 ---
+The Structure of DIdactic C Kernel
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+3
+
+--- Page 4 ---
+Process States, Analysis
+• In addition, a real-time 
+kernel that supports the 
+execution of periodic 
+tasks, another state must 
+be considered, the IDLE 
+state
+• IDLE: …
+• Additional states can be 
+introduced by other kernel 
+services. Example are:
+• DELAY …
+• RECEIVE …
+• ZOMBIE …
+A real-time OS where semaphores are used for 
+mutual exclusion and synchronization, we must 
+have at least 3 main states:
+RUN: … 
+READY: … 
+WAIT: …
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+4
+
+--- Page 5 ---
+Argument for a New State for System that Support 
+Dynamic Creation and Termination of Hard 
+Periodic Tasks
+Task scenario problem: set of 
+3 periodic tasks is scheduled 
+using RM algorithm
+• Execution times are:
+• τ1 = 1; τ2 = 4; τ3 = 4;
+• Task periods are: 4, 8, 16
+• Based on RM the priorities 
+relation is: τ1 > τ2 > τ3
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+5
+
+--- Page 6 ---
+The Need of an Extra State
+Condition problem to 
+solve: suppose that τ2 is 
+aborted at t=4 and a new 
+task τnew is created
+• τ3 would miss its 
+deadline if a new task 
+τnew replaces the old 
+task τ2 at time 4;
+• This is due to the 
+effects of τ2 execution 
+on the schedule
+The effects of τ2 in the utilization factor do not 
+cancel at the time it is aborted, but prolong 
+until the end of its period.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+6
+
+--- Page 7 ---
+Solution to the State Problem
+• The new task set is 
+schedulable when τnew 
+is delayed until the end 
+of the current period of 
+τ2
+• In the interval of time 
+between the abort 
+operation and the end 
+of its period, τ2 will be 
+placed in a new state to 
+be called ZOMBIE state
+In the ZOMBIE stated the task doesn’t exist in the 
+system but it continues to occupy processor bandwidth 
+as related to the processor utilization factor.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+7
+
+--- Page 8 ---
+Complete 
+State 
+Transition 
+Diagram 
+for Kernel
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+8
+
+--- Page 9 ---
+Simplified State Transition Diagram in DIdactic C
+Kernel
+The kernel 
+presentation 
+focuses only on the 
+essential functions:
+• message passing 
+mechanism and 
+delay primitives 
+are not 
+introduced
+The kernel supports activation and suspension of aperiodic tasks by one new state and two primitives:
+•
+SLEEP state; activate and sleep primitives.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+9
+
+--- Page 10 ---
+Data Structures
+• An OS will store data information about a task in a
+data structure called the Task Control Block (TCB)
+• A TCB contains all the parameters specified by the 
+programmer at creation time + other temporary 
+information used for management
+• Typical fields for a real-time kernel are given in the 
+table
+• Note the existence of new fields such as period, 
+computation time, relative deadline, absolute deadline, 
+and utilization factor.
+• A TCB must be inserted in the lists handled by the 
+kernel, so we have the pointer to the next TCB
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+10
+
+--- Page 11 ---
+Queue of Tasks
+• In the kernel, a TCB is an element of 
+the vdes[MAXPROC] array
+• Each TCB can be then identified by a 
+unique index corresponding to its 
+position in the vdes array.
+• As a result, any queue of tasks can be 
+accessed by an integer variable 
+containing the array index of the TCBs 
+in the queue
+Example of a ready queue 
+configuration within the vdes array
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+11
+
+--- Page 12 ---
+Semaphore Control Block Data Structure
+• The semaphore information is stored in a Semaphore Control 
+Block (SCB) which will contain at least 3 fields as shown
+• Each SCB is an element of the vsem[MAXSEM] array
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+12
+
+--- Page 13 ---
+Type Definitions
+• Based on the array approach, tasks, semaphores, and queues can be 
+accessed by an integer number that represents the index of the 
+corresponding control block.
+• There are different types however, that are defined for the integer access 
+variables as shown in the table
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+13
+
+--- Page 14 ---
+Data Structures Description, TCB, SCB
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+14
+
+--- Page 15 ---
+Data Structures Description, TCB, SCB
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+15
+
+--- Page 16 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Time Management
+The kernel needs a time reference to manage its activity:
+• A real-time timer is programmed to interrupt the processor at a 
+fixed rate called a system tick – this is the kernel’s time resolution
+• The kernel’s system time is represented by a long integer variable 
+called sys_clock and the value of the tick by a float variable
+unsigned long sys_clock; 
+float 
+time_unit;
+/* system time */
+/* unit of time (ms) */
+• So, if Q denotes the system tick and n is the value sys_clock, the 
+actual time elapsed since system initialization is: t = n*Q
+• Typical time resolution values can vary from 1 to 50 ms
+16
+
+--- Page 17 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Tick Values Considerations
+• The tick value is application specific
+• small tick values improve system responsiveness and allow handling 
+periodic activities with high activation rates.
+• a very small tick value will cause a large runtime overhead due to the 
+timer handling routine and reduces the system lifetime
+• The maximum time (system lifetime) depends on tick value
+• To better control task deadlines and periodic activations, all task 
+time parameters specified should be multiple of the system tick
+• If the tick value is user defined,
+• Make tick value = the greatest common divisor of all the task periods
+17
+
+--- Page 18 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Timer Interrupt Handling Routine
+• At each tick interrupt, the interrupt handling routine must do:
+• Save the context of the task in execution
+• Increment the system time
+• Generate a timing error, if the current time is greater than the system 
+lifetime
+• Generate a time-overflow error, if the current time is greater than some 
+hard deadline
+• Awaken those idle tasks, if any, that must begin a new period
+• Call the scheduler, if at least a task needs be awakened
+• Remove all zombie tasks for which their deadline is expired
+• Load the context of the current task; and
+• Return from interrupt
+• The runtime overhead introduced by the execution of the timer 
+routine is proportional to its interrupt rate.
+18
+
+--- Page 19 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Task Classes
+• Real-world control applications usually consist of computational 
+activities having various characteristics:
+• Tasks may be periodic, aperiodic, time-driven, and event-driven, and 
+may have different levels of criticality
+• Only two classes of tasks are considered in DIdactic C Kernel
+• HARD tasks, having a critical deadline, and
+• Non-real-time (NRT) tasks, having a fixed priority
+• HARD tasks can be activated periodically or aperiodically 
+depending on how an instance of a task is terminated:
+• Terminated with end_cycle primitive, the task goes in IDLE state
+• Terminated with end_aperiodic primitive the task goes in SLEEP state
+19
+
+--- Page 20 ---
+Scheduling Algorithm
+• HARD tasks are scheduled using the Earliest Deadline First 
+(EDF) algorithm
+• NRT tasks are executed in background based on their 
+priority.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+20
+
+--- Page 21 ---
+Global
+Constants
+Defined so the 
+description of the 
+source code is clear. 
+Typically they define 
+the maximum sizes for 
+the main kernel data 
+structures;
+Or encode process 
+classes 
+-->
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+21
+
+--- Page 22 ---
+Global 
+Constants
+Or states -->
+Or error 
+messages -->
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+22
+
+--- Page 23 ---
+Kernel 
+Initialization
+• The real-time 
+environment is 
+initialized when 
+ini_system primitive is 
+executed within a C 
+main program
+• This main program 
+becomes a NRT task in 
+which new concurrent 
+tasks can be created
+ENGG4420: Developed by Radu Muresan, F22 
+365
+The most important 
+activities performed by 
+ini_system concern 
+initializing the tick timer, 
+all queues …
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+23
+
+--- Page 24 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Kernel Primitives
+• The structure of the kernel is logically divided into several 
+hierarchical layers
+• The lowest layer includes:
+• all interrupt handling drivers, and
+• routines for saving and loading task context
+• Next layers up contain:
+• The functions for list manipulation (insertion, extraction, etc.)
+• Basic mechanisms for task management (dispatching and scheduling)
+• Top layer (user level) contains:
+• All kernel services visible by the user: task creation, activation, 
+suspension, termination, synchronization, and status inquiry
+24
+
+--- Page 25 ---
+Low-Level Primitives; save_context
+Implement:
+•
+The mechanism 
+for saving and 
+loading the 
+context of a 
+task;
+Task Context: the 
+content of the 
+processor registers
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+25
+
+--- Page 26 ---
+Low-Level Primitives; load_context
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+26
+
+--- Page 27 ---
+List Management, Insert
+• Tasks are scheduled based 
+on EDF and as a result all 
+queues in the kernel are 
+ordered by decreasing 
+deadlines
+• The task with the earliest 
+deadline is at the head
+• An insertion requires a 
+scan through the list
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+27
+
+--- Page 28 ---
+List 
+Management, 
+Insert 
+Function
+The insert function is called 
+with two parameters:
+• the index of the task to be 
+inserted and
+• the pointer of the queue.
+It uses two auxiliary pointers, 
+p and q,
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+28
+
+--- Page 29 ---
+List Management, Extracting
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+• By using bidirectional 
+pointers allows the 
+optimization of the 
+extraction operation
+• Extraction can be 
+realized in one step 
+without scanning the 
+entire queue
+29
+
+--- Page 30 ---
+List Management, Extract Function
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+30
+
+--- Page 31 ---
+List 
+Management, 
+Extracting at 
+the Head of 
+Queue
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+31
+
+--- Page 32 ---
+List 
+Management, 
+Other Functions
+In order to simplify the code 
+reading of the next levels, two 
+more functions are defined:
+• firstdline: returns the 
+deadline of the task at the 
+head of the Queue;
+• empty: returns TRUE if a 
+queue is empty, FALSE 
+otherwise
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+32
+
+--- Page 33 ---
+Scheduling 
+Mechanism
+• The scheduling is implemented 
+through the functions schedule 
+and dispatch
+• schedule primitive verifies 
+whether the running task is the 
+one with the earliest deadline
+• If so, there is no action,
+• Otherwise the running task is 
+inserted in the ready queue and 
+the first ready task is dispatched
+• The dispatch primitive just 
+assigns the processor to the 
+first ready task
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+33
+
+--- Page 34 ---
+The Timer Interrupt 
+Handling Routine
+wake_up
+In summary, it:
+• increments the sys clock variable,
+• checks for the system lifetime and 
+possible deadline misses,
+• removes those tasks in zombie state
+whose deadlines are expired, and, 
+finally,
+• resumes those periodic tasks in idle
+state at the beginning of their next 
+period.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+34
+
+--- Page 35 ---
+Task Management
+by Radu Muresan, F22 
+377
+It concerns creation, activation, 
+suspension, and termination of 
+tasks.
+The create primitive
+allocates and initializes all data 
+structures needed by a task and 
+puts the task in SLEEP.
+A guarantee function call is 
+performed for HARD tasks!
+ENGG4420: Developed
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+35
+
+--- Page 36 ---
+Task Management, Guarantee
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+36
+
+--- Page 37 ---
+Task Management, Activate
+• The system call activate 
+inserts a task in the ready 
+queue, performing the 
+transition SLEEP–READY.
+• If the task is HARD, its 
+absolute deadline is set 
+equal to the current time 
+plus its period.
+• Then the scheduler is 
+invoked to select the task 
+with the earliest deadline.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+37
+
+--- Page 38 ---
+Task Management, Sleep
+• The transition RUN–SLEEP is 
+performed by the sleep system call.
+• This primitive acts on the calling 
+task, which can be periodic or 
+aperiodic
+• The running task -> SLEEP state, and
+• The first ready task is dispatched for 
+execution.
+• The sleep primitive is used at the 
+end of a cycle to terminate an 
+aperiodic instance.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+38
+
+--- Page 39 ---
+Task Management, 
+Terminating a Periodic 
+Task Instance – end_cycle
+end_cycle
+• informs the kernel about the time 
+at which the timer has to resume 
+the job.
+• puts the running task into the idle
+queue.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+schedule ();
+39
+
+--- Page 40 ---
+Task Management, Terminating a Process
+There are two primitives 
+for terminating a 
+process:
+1) end_process → 
+operates on the calling 
+task;
+2) kill → operates on a 
+task passed as a formal 
+parameter.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+40
+
+--- Page 41 ---
+kill Process 
+Primitive
+For HARD tasks the 
+terminating process is: 
+RUN → ZOMBIE state
+•
+The ZOMBIE → FREE
+state will be done by 
+wake_up timer 
+routine at the end of 
+the current period.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+41
+
+--- Page 42 ---
+Semaphores
+Used for:
+• synchronization and 
+mutual exclusion
+Four primitives are 
+implemented for 
+semaphores:
+• newsem; delsem; wait; 
+and signal
+For example, s1 = newsem(0) defines a semaphore for synchronization, 
+whereas s2 = newsem(1) defines a semaphore for mutual exclusion.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+42
+
+--- Page 43 ---
+Semaphores, 
+delsem ()
+delsem()
+• deallocates the 
+semaphore 
+control block, 
+inserting it in the 
+list of free 
+semaphores
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+43
+
+--- Page 44 ---
+Semaphores, wait ()
+wait () primitive
+• used by a task to wait for an 
+event associated with a 
+semaphore.
+• The state of the task, WAIT or 
+continue is determined by the 
+vsem[s].count (the semaphore 
+count value)
+• When task is blocked the first 
+ready task dispatched
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+44
+
+--- Page 45 ---
+Semaphores, signal ()
+signal () primitive –
+• used by a task to signal an event 
+associated with a semaphore.
+• if the semaphore’s queue is empty, the 
+counter is incremented, and the task 
+continues its execution.
+• If there are blocked tasks
+• the task with the earliest deadline (head of 
+queue) is switched into the READY state
+• Possibly a context switch will take place … so 
+schedule () is called.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+45
+
+--- Page 46 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Priority Inversion Issue
+• Classical semaphores are prone to the priority inversion 
+phenomenon, which introduces unbounded delays during 
+tasks’ execution and prevents any form of guarantee on hard 
+tasks – see uC/OS-III presentation
+• This type of semaphores should be used only by non-real-time 
+tasks, for which no guarantee is performed
+• Real-time tasks, must support more predictable mechanisms:
+• Stack Resource Policy protocols
+• Asynchronous communication buffers – implemented by DIdactic 
+C Kernel
+46
+
+--- Page 47 ---
+Status Inquiry, Primitives Support
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+47
+
+--- Page 48 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Inter-task Communication Mechanisms
+• The use of shared resources for implementing message 
+passing scheme may cause priority inversion and unbounded 
+blocking on task’s execution → this can prevent any 
+guarantee on the schedule of the task set
+• We will review some problems and solutions related to 
+typical communication semantics in operating systems:
+• The synchronous model
+• The asynchronous model
+48
+
+--- Page 49 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Synchronous Communication Model
+• In a pure synchronous communication model, whenever two 
+tasks want to communicate, they must be synchronized for a 
+message transfer to take place.
+• This synchronization is called a rendez-vous
+• In a dynamic real-time system it is difficult to estimate the 
+maximum blocking time for a process rendez-vous
+• In a static real-time environment, the problem can be solved off- 
+line by transforming all synchronous interactions into precedence 
+constraints
+• Each task is decomposed into a number of sub-tasks that contain 
+communication primitives not inside their code but only at boundary
+• A precedence relation is imposed between adjacent subtasks
+49
+
+--- Page 50 ---
+Example of Decomposition of Communication 
+Tasks
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+50
+
+--- Page 51 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Asynchronous Communication Model
+• In a pure asynchronous communication scheme, 
+communicating tasks do not have to wait for each other
+• The sender deposits its message into a channel and continue its 
+execution independently of the receiver status
+• Also, the receiver can directly access the message (if exists) 
+without synchronizing with the sender
+• Asynchronous communication schemes are better suited for 
+dynamic real-time systems
+• No unbounded delays are introduced during tasks communication
+• Timing constraints can be guaranteed without increasing the 
+complexity of the system
+51
+
+--- Page 52 ---
+Mailbox 
+Mechanism
+• In most commercial real-time operating systems we can use mailbox 
+to implement the asynchronous communication scheme
+• A mailbox is a shared memory buffer that has a capacity; FIFO queue
+• Two basic operations are implemented: send and receive
+• As long as it is guaranteed that a mailbox is never empty and never 
+full, sender(s) and receiver(s) are never blocked.
+• Due to its fixed capacity, a mailbox provides only a partial solution to 
+the problem of asynchronous communication
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+52
+
+--- Page 53 ---
+Example of Poor Asynchronous Communication 
+using Mailbox Scheme
+System: 2 periodic tasks τ1 and τ2 with periods T1 and T2 that 
+each exchange messages through a mailbox having capacity n
+Scenario: τ1 → sender; τ2 → receiver
+• Case: T1 < T2 → the sender inserts in the mailbox more messages 
+than the receiver can extract, and eventually the sender must be 
+delayed
+• Case: T1 > T2 → the receiver reads faster than the sender can 
+send and eventually the receiver must wait.
+• Conclusion: If T1 
+T2, sooner or later both tasks will run at 
+the lowest rate, and the task with the shortest period will 
+miss its deadline
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+53
+
+--- Page 54 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Cyclic Asynchronous Buffers (CABs)
+CAB is an alternative solution to the asynchronous communication 
+Features of CAB:
+• provides one-to-many communication channel which at any instant 
+contains the latest message or data inserted in it
+• A message is not consumed by a receiving process but is maintained into 
+the CAB structure until a new message is overwritten
+• Once the first message has been put in a CAB, a task can never be blocked 
+during receive operation
+• Since a new message overwrites the old one, a sender can never be blocked
+• A message can be read more than once if receiver is faster than sender
+• Messages can be lost if sender is faster than receiver
+• However, this is not a problem in many control applications where tasks are 
+interested only in fresh sensory data rather than a complete message history
+54
+
+--- Page 55 ---
+CAB Operation
+• open_cab(): creates and 
+initializes a CAB
+• Parameters: CAB name; 
+the dimension of the 
+message; and the 
+number of simultaneous 
+messages allowed
+• delete_cab (): deletes a 
+CAB object
+Task operations to insert a message in a CAB:
+1.
+reserve a buffer from the CAB memory space
+2.
+copy the message into the buffer,
+3.
+put the buffer into the CAB structure where it becomes 
+the most recent message:
+Task operations to get a message from a CAB:
+1.
+Get the pointer to the most recent message
+2.
+Utilize the data,
+3.
+Release the pointer
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+55
+
+--- Page 56 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+CAB Operation
+• More tasks can simultaneously access the same buffer in a CAB 
+for reading.
+• If a task P reserves a CAB for writing while another task Q is using 
+that CAB, a new buffer is created, so that P can write its message 
+without interfering with Q.
+• As P finishes writing, its message becomes the most recent one in that 
+CAB.
+• The maximum number of buffers that can be created in a CAB is 
+specified as a parameter in the open cab primitive.
+• To avoid blocking, this number must be equal to the number of tasks 
+that use the CAB plus one.
+56
+
+--- Page 57 ---
+CAB Control Block Data Structure
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+57
+
+--- Page 58 ---
+CAB Primitive reserve
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+58
+
+--- Page 59 ---
+CAB Primitive putmes
+putmes() primitive 
+will update the 
+pointer to the most 
+recent buffer 
+(MRB).
+But, before 
+doing that, 
+however, it
+deallocates the old
+MRB if no tasks are 
+accessing that 
+buffer.
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+59
+
+--- Page 60 ---
+CAB Primitives, 
+getmes, unget
+getmes() …
+unget () …
+• decrements the 
+number of tasks 
+accessing that buffer
+• deallocates the 
+buffer if no task is 
+accessing it and it is 
+not the MRB
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+60
+
+--- Page 61 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+System Overhead
+• The overhead of an OS represents the time used by the 
+processor for handling all kernel mechanisms:
+• Operations such as enqueueing tasks, performing context 
+switches, updating the internal data structures, sending messages 
+to communication channels, servicing the interrupt requests, etc.
+• In general this overhead is usually much smaller than the 
+execution times of the application tasks
+• Hence, it can be neglected in the schedulability analysis and in the 
+resulting guarantee test
+61
+
+--- Page 62 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Key Overhead Issues
+• If the execution time of tasks is small and we deal with tight 
+timing constraints, then overhead must be analyzed
+• The most important overhead times introduced by OS are:
+• context switch time
+• time needed by the processor to execute the timer interrupt 
+handling routine
+62
+
+--- Page 63 ---
+The Effects of the Timer Routine and Context 
+Switch
+The execution intervals (σ) due to the timer routine and 
+the execution intervals (δ) necessary for a context switch 
+play a role in the schedulability analysis of the system
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+63
+
+--- Page 64 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Accounting for Timer Interrupt Overhead
+Assume:
+• Q system tick period
+• σ is the worst-case execution time of the timer handler
+The timer overhead can be computed as the utilization factor:
+Ut =σ/Q
+• The effects of Ut into the schedulability analysis of the system 
+can be taken into account by:
+• Adding the factor Ut to the total utilization of the task set U
+• Or, reducing the least upper bound of the utilization factor Ulub by Ut
+64
+
+--- Page 65 ---
+Unet as a Function of Q
+In order to obtain Unet > 0, the 
+system tick Q must always be 
+greater that (σ/Ulub) as it can 
+be derived from the Unet 
+relationship:
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+65
+
+--- Page 66 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Accounting for Context Switch Overhead
+• The context switch time is one of the most significant overhead 
+factors in any operating system
+• the time needed for explicit context switches (that is, the ones triggered 
+by system calls) can be considered in the execution time of the kernel 
+primitives; thus, it will be charged to the worst-case execution time of 
+the calling task
+• the overhead associated with implicit context switches (that is, the ones 
+triggered by the kernel) can be charged to the preempted tasks
+• In this case, the schedulability analysis requires a correct 
+estimation of the total number of preemptions that each task 
+may experience
+66
+
+--- Page 67 ---
+Week 7 - Kernel Design Issues of a Hard Real-Time Kernel for Critical Control Applications
+Accounting for Interrupt
+• Two basic approaches can be used to handle overhead 
+related to interrupts coming from external devices
+1. Associate an aperiodic or sporadic task to each source of 
+interrupt
+• This task is responsible for handling the device and is subject to 
+the scheduling algorithm as any other task in the system
+2. Allowing the interrupt handling routines to preempt the 
+current task and execute immediately at the highest 
+priority
+• This method minimizes the interrupt latency
+67

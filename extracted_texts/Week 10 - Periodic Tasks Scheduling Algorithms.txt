@@ -1,0 +1,740 @@
+
+--- Page 1 ---
+Periodic Tasks Scheduling Algorithms (Chapter 
+4)
+Sections covered:
+1. Processor utilization factor
+2. Timeline scheduling
+3. Rate monotonic scheduling
+4. Earliest deadline first scheduling
+5. Deadline monotonic
+6. EDF with constrained deadlines
+Week 10 - Periodic Tasks Scheduling Algorithms
+1
+
+--- Page 2 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Periodic Task Scheduling
+• In many real-time control applications, periodic activities 
+represent the major computational demand in the system.
+• Periodic tasks typically arise from sensory data acquisition, low- 
+level servoing, control loops, action planning, and system 
+monitoring (See Chapter 11 for examples)
+• When a control application consists of several concurrent 
+periodic tasks with individual timing constraints, the operating 
+system must guarantee that each periodic instance is regularly 
+activated at its proper rate and is completed within its deadline
+• Algorithms presented are: timeline scheduling, rate monotonic, 
+earliest deadline first, and deadline monotonic
+2
+
+--- Page 3 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Notations
+• Γ denotes a set of periodic tasks;
+• τi denotes a generic periodic task;
+• τi,j denotes the jth instance of task τi;
+• ri,j denotes the release time of the jth instance of task τi;
+• Φi denotes the phase of task τi; that is, the release time of its first 
+instance (Φi = ri,1);
+• Di denotes the relative deadline of task τi;
+• di,j denotes the absolute deadline of the jth instance of task τi 
+di,j = Φi + (j − 1)Ti + Di
+• si,j denotes the start time of the jth instance of task τi; that is, the time at 
+which it starts executing.
+• fi,j denotes the finishing time of the jth instance of task τi; that is, the 
+time at which it completes the execution.
+3
+
+--- Page 4 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Schedulability Analysis, Hypotheses 
+Assumed on Tasks
+• A1. The instances of a periodic task τi are regularly activated at a
+constant rate. The interval Ti between two consecutive activations is the
+period of the task
+• A2. All instances of a periodic task τi have the same worst-case execution 
+time Ci
+• A3. All instances of a periodic task τi have the same relative deadline Di, 
+which is equal to the period Ti
+• A4. All tasks in Γ are independent; that is, there are no precedence 
+relations and no resource constraints
+• A5. No task can suspend itself, for example on I/O operations.
+• A6. All tasks are released as soon as they arrive
+• A7. All overheads in the kernel are assumed to be zero
+4
+
+--- Page 5 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Periodic Task Parameters
+• In the cases, in which the assumptions A1, A2, A3, and A4 hold, a 
+periodic task τi can be completely characterized by the following 
+three parameters: its phase Φi, its period Ti and its worst-case 
+computation time Ci.
+• Thus, a set of periodic tasks can be denoted by: 
+Γ = {τi(Φi, Ti, Ci), i = 1, . . . , n}.
+• The release time ri,k and the absolute deadline di,k of the generic 
+kth instance can then be computed as:
+ri,k = Φi + (k − 1)Ti
+di,k = ri,k + Ti = Φi + kTi
+5
+
+--- Page 6 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Periodic Task Parameters
+• Hyperperiod: the minimum interval of time H after which the schedule 
+repeats itself; the schedule in [0,H] is the same as that in [kH, (k + 1)H] 
+for any integer k > 0.
+• For a set of periodic tasks synchronously activated at time t = 0: H = lcm(T1, . .
+. , Tn). [lcm stands for least common multiple]
+• Job response time: the time (measured from the release time) at which 
+the job is terminated: Ri,k = fi,k − ri,k.
+• Task response time: the maximum response time among all the jobs: 
+Ri = maxk Ri,k ; for all k
+• Critical instant of a task: the arrival time that produces the largest task 
+response time.
+• Critical time zone of a task: the interval between the critical instant and 
+the response time of the corresponding request of the task
+6
+
+--- Page 7 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Periodic Task Parameters
+• Relative Start Time Jitter of a task: the maximum deviation of 
+the start time of two consecutive instances:
+RRJi = maxk |(si,k − ri,k) − (si,k−1 − ri,k−1)|.
+• Absolute Start Time Jitter of a task. It is the maximum deviation 
+of the start time among all instances:
+ARJi = maxk (si,k − ri,k) − mink (si,k − ri,k).
+• Relative Finishing Jitter of a task. It is the maximum deviation of 
+the finishing time of two consecutive instances:
+RFJi = maxk|(fi,k − ri,k) − (fi,k−1 − ri,k−1)|.
+• Absolute Finishing Jitter of a task. It is the maximum deviation of 
+the finishing time among all instances:
+AFJi = maxk(fi,k − ri,k) − mink(fi,k − ri,k)
+7
+
+--- Page 8 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Feasibility
+• A periodic task τi is said to be feasible if all its instances finish 
+within their deadlines.
+• A task set Γ is said to be schedulable (or feasible) if all tasks 
+in Γ are feasible.
+8
+
+--- Page 9 ---
+Processor Utilization Factor
+• Given a set Γ of n periodic tasks, the processor utilization factor U is the 
+fraction of processor time spent in the execution of the task set .
+• Since Ci/Ti is the fraction of processor time spent in executing task τi, the
+utilization factor for n tasks is given by:
+i
+i
+n
+Week 10 - Periodic Tasks Scheduling Algorithms
+i=1
+• The processor utilization factor provides a measure of the computational 
+load on the CPU due to the periodic task set.
+• The CPU utilization can be improved by increasing tasks’ computation 
+times or by decreasing their periods,
+• However, there exists a maximum value of U below which Γ is schedulable 
+and above which Γ is not schedulable
+9
+
+--- Page 10 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Upper Bound Processor Utilization Factor
+• Let Uub(Γ,A) be the upper bound of the processor utilization 
+factor for a task set Γ under a given algorithm A.
+• When U = Uub(Γ,A), the set Γ is said to fully utilize the 
+processor:
+• In this situation, Γ is schedulable by A, but an increase in the 
+computation time in any of the tasks will make the set infeasible.
+10
+
+--- Page 11 ---
+Example of 
+Upper Bound 
+Processor 
+Utilization 
+Factor
+Week 10 - Periodic Tasks Scheduling Algorithms
+11
+
+--- Page 12 ---
+The Least Upper 
+Bound Ulub(A) of an 
+Algorithm A
+• Ulub(A) = minΓUub(Γ,A)
+• Uub(A) -- each task set Γi fully 
+utilizes the processor when its 
+utilization factor Ui (varied by 
+changing tasks’ computation 
+times) reaches a particular 
+upper bound Uubi.
+• If Ui ≤ Uubi , then Γi is schedulable, 
+else Γi is not schedulable.
+• As a result, any task set having a 
+processor utilization factor U 
+below Ulub(A) is certainly 
+schedulable by A.
+Week 10 - Periodic Tasks Scheduling Algorithms
+The task sets Γi shown in the figure differ for the number 
+of tasks and for the configuration of their periods.
+12
+
+--- Page 13 ---
+Ulub Considerations
+• Ulub is useful for easily verifying the schedulability of a task set
+• Any task set whose processor utilization factor is less than or equal 
+to this bound is schedulable by the algorithm
+• When Ulub < U ≤ 1 the schedulability can be achieved only if the task 
+periods are suitably related
+Week 10 - Periodic Tasks Scheduling Algorithms
+13
+
+--- Page 14 ---
+Timeline Scheduling (TS) or Cyclic Executive
+Week 10 - Periodic Tasks Scheduling Algorithms
+• TS is one of the most used algorithms to handle periodic tasks in defense 
+military systems and traffic control systems.
+• Methodology: divide the temporal axis into slots of equal length
+• Slot length should be equal to the greatest common divisor of the periods
+• A timer synchronizes the activation of the tasks at the beginning of each 
+time slot
+• Example … in class …
+14
+
+--- Page 15 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Minor and Major Cycles
+• The duration of the time slot is also called a Minor Cycle, and 
+is equal to the greatest common divisor of the periods
+• The minimum interval of time after which the schedule 
+repeats itself (the hyperperiod H) is also called a Major Cycle
+• In general, the major cycle is equal to the least common multiple 
+of all the periods
+15
+
+--- Page 16 ---
+TS Feasibility
+• In order to guarantee a priori 
+that a schedule is feasible on a 
+particular processor, it is 
+sufficient to know the task 
+worst-case execution times and 
+verify that the sum of the 
+executions within each time slot
+is less than or equal to the minor 
+cycle.
+• For the example we must show 
+that:
+Week 10 - Periodic Tasks Scheduling Algorithms
+16
+
+--- Page 17 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Implementation, Advantages, Disadvantages
+• TS Implementation. By programming a timer to interrupt 
+with a period equal to the minor cycle and by writing a main 
+program that calls the tasks in the order given in the major 
+cycle, inserting a time synchronization point at the beginning 
+of each minor cycle
+• Advantages … simplicity… low overhead … no task jitter …
+• Disadvantages … fragile during overload conditions … 
+sensitive to application changes … difficulty to handle 
+aperiodic tasks …
+17
+
+--- Page 18 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Rate Monotonic Scheduling
+• The Rate Monotonic (RM) scheduling algorithm is based on a simple rule 
+that assigns priorities to tasks according to their request rates.
+• Tasks with higher request rates (that is, with shorter periods) will have 
+higher priorities.
+• Since periods are constant, RM is a fixed-priority assignment:
+• A priority Pi is assigned to the task before execution and does not change over 
+time.
+• Moreover, RM is intrinsically preemptive: the currently executing task is 
+preempted by a newly arrived task with shorter period.
+• Liu and Layland
+• showed that RM is optimal among all fixed-priority assignments
+• derived the Ulub factor for a generic set of n periodic tasks.
+18
+
+--- Page 19 ---
+Optimality of RM
+• First show that: a critical instant
+for any task occurs whenever the
+task is released simultaneously 
+with all higher priority tasks.
+• Let Γ = {τ1, τ2, . . . , τn} be a set of
+periodic tasks ordered by
+increasing periods => τn has the 
+lowest priority.
+• The worst response time of a task
+occurs when it is released
+simultaneously with all higher- 
+priority tasks
+• Proof … analyze graphs a and b …
+Therefore, the response time of τn is largest when it is 
+released simultaneously with τi
+… repeat the argument for all tasks…
+Week 10 - Periodic Tasks Scheduling Algorithms
+19
+
+--- Page 20 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+RM is Optimal
+• Based on the result from previous slide: the task set 
+schedulability can be easily checked at the critical instants of 
+the tasks in the set:
+• If all tasks are feasible at their critical instants, then the task set is 
+schedulable in any other condition
+• The optimality of RM is justified by showing that if a task set 
+is schedulable by an arbitrary priority assignment, then it is 
+also schedulable by RM.
+20
+
+--- Page 21 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Optimality by RM, 2 Tasks Set
+• It can be shown that, given two periodic tasks τ1 and τ2, with 
+T1 < T2, and if their schedule is feasible by an arbitrary 
+priority assignment, then it is also feasible by RM.
+• That is, RM is optimal.
+• This result can be further extended to a set of n periodic 
+tasks.
+21
+
+--- Page 22 ---
+2 Tasks Set Scheduled by a Different Algorithm
+Consider a set of two 
+periodic tasks τ1 and 
+τ2, with T1 < T2.
+This task set is 
+schedulable by an 
+algorithm different 
+than RM
+If priorities are not 
+assigned according to 
+RM, then task τ2 will 
+receive the highest 
+priority
+Here in fact we have a critical instant that we depicted before. As a 
+result the schedule is feasible if the following inequality is satisfied:
+C1 + C2 ≤ T1.
+Week 10 - Periodic Tasks Scheduling Algorithms
+22
+
+--- Page 23 ---
+2 Tasks Set Scheduled by RM
+• If priorities are assigned according to RM, task τ1 will receive 
+the highest priority.
+• This situation is illustrated in next the slide
+• In order to guarantee a feasible schedule two cases must be 
+considered.
+2 
+1
+Week 10 - Periodic Tasks Scheduling Algorithms
+• Let F = 
+be the integer number of periods of T1 entirely
+contained in T2.
+• Case (a): C1 < T2 − F·T1
+• Case (b): C1 ≥ T2 − F·T1
+23
+
+--- Page 24 ---
+Proof: … in class work …
+Week 10 - Periodic Tasks Scheduling Algorithms
+24
+
+--- Page 25 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+RM Optimality
+• We shown that, given two periodic tasks τ1 and τ2, with T1 < 
+T2, if the schedule is feasible by an arbitrary priority 
+assignment, then it is also feasible by RM.
+• That is, RM is optimal.
+• This result can easily be extended to a set of n periodic tasks.
+• Next we show how to compute the least upper bound Ulub of 
+the processor utilization factor for the RM algorithm.
+• This is an important result for task set schedulability analysis
+• The bound is first determined for two tasks and then it can be 
+extended for an arbitrary number of tasks.
+25
+
+--- Page 26 ---
+Calculation of Ulub for Two Tasks Set
+• Consider the set of two periodic tasks τ1 and τ2, with T1 < T2
+• In order to compute Ulub for RM we must:
+• Assign RM priorities to the tasks; τ1 will have the highest priority
+• Compute the upper bound Uub for the task set by inflating computation 
+times to fully utilize the processor
+• Minimize Uub with respect to all other task parameters
+• Let F = 
+2/
+1
+• The computation time C2 is adjusted to fully utilize the processor
+• Two cases (as function of F) will be considered for calculating Uub
+Week 10 - Periodic Tasks Scheduling Algorithms
+26
+
+--- Page 27 ---
+Case 1
+C1 < T2 − F·T1
+In class work … 
+See pp. 90 in the 
+reference book!
+Week 10 - Periodic Tasks Scheduling Algorithms
+27
+
+--- Page 28 ---
+Case 2
+C1 ≥ T2 − F·T1
+In class work … 
+See pp. 91 in 
+the reference 
+book!
+Week 10 - Periodic Tasks Scheduling Algorithms
+28
+
+--- Page 29 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Calculation of ULUB for Two Tasks, RM
+29
+
+--- Page 30 ---
+2 Tasks Set Minimum Uub (See pp. 92 to 93)
+ 1+G2
+• In both cases, the minimum value of Uub occurs for:
+C1 = T2 − T1×F
+• Expressing U from previous cases as U(F) we get the 
+minimum of U occurring for the minimum value of F; namely, 
+F = 1. Thus:
+; where G = T2/T1 – F;
+1+G
+• Now minimizing U over G we get:
+0.5
+lub
+;
+Week 10 - Periodic Tasks Scheduling Algorithms
+30
+
+--- Page 31 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Analysis for a Given F Value
+• If T2 is a multiple of T1 then G = 0 => U = 1
+• In general the utilization factor for two tasks can be 
+computed as a function of the ratio k = T2/T1;
+• For a given F, minimizing U for k we get
+• U* = …
+31
+
+--- Page 32 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+32
+
+--- Page 33 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+33
+
+--- Page 34 ---
+RM Ulub Equation for n Tasks (See pp.95-96)
+The results shown for a 2 tasks set can be generalized as 
+follows:
+• For an arbitrary set of periodic tasks, the least upper bound 
+of the processor utilization factor under the Rate Monotonic 
+scheduling algorithm is:
+Ulub = n(21/n − 1)
+Week 10 - Periodic Tasks Scheduling Algorithms
+34
+
+--- Page 35 ---
+Hyperbolic Bound for RM
+Week 10 - Periodic Tasks Scheduling Algorithms
+• The feasibility analysis of the RM algorithm can also be 
+performed using the Hyperbolic Bound approach.
+• The following theorem provides a sufficient condition for 
+testing the schedulability of a task set under the RM 
+algorithm.
+• Theorem 4.1 Let Γ = {τ1, . . . , τn} be a set of n periodic tasks, 
+where each task τi is characterized by a processor utilization 
+Ui. Then, Γ is schedulable with the RM algorithm if:
+35
+
+--- Page 36 ---
+… proof, in class work …
+Week 10 - Periodic Tasks Scheduling Algorithms
+36
+
+--- Page 37 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+37
+
+--- Page 38 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Earliest Deadline First
+• The Earliest Deadline First (EDF) algorithm is a dynamic 
+scheduling rule using the absolute deadlines such that, tasks 
+with earlier deadlines will be executed at higher priorities.
+• Since the absolute deadline of a periodic task depends on the 
+current jth instance as: di,j = Φi + (j − 1)Ti + Di, EDF is a dynamic 
+priority assignment.
+• EDF, it is typically executed in preemptive mode.
+• Also, EDF does not make any specific assumption on the 
+periodicity of the tasks; works for both, aperiodic and periodic
+• The proof of optimality is the same as presented in Chapter 3.
+38
+
+--- Page 39 ---
+Schedulability Analysis
+• Under the assumptions A1, A2, A3, and A4, the 
+schedulability of a periodic task set handled by EDF can be 
+verified through the processor utilization factor.
+• See proof pp. 100 to 101 in the book
+Week 10 - Periodic Tasks Scheduling Algorithms
+39
+
+--- Page 40 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Notes on Proof of EDF Schedulability
+Follows two steps:
+1. Only if. We show that a task set cannot be scheduled if: 
+U > 1
+2. If. We show the sufficiency by contradiction; assume that 
+the condition U < 1 is satisfied and yet the task set is not 
+schedulable.
+Review proof in the textbook.
+40
+
+--- Page 41 ---
+An Example
+• The periodic task set of 
+Figure 4.13:
+U = 2/5 + 4/7 = 34/35 = 0.97;
+• Then, 97 % of the 
+processor time is used to 
+execute the periodic tasks, 
+while the CPU is idle in the 
+remaining 3 %.
+• Since U > 2(√2−1) = 0.83,
+the schedulability of the 
+task set cannot be 
+guaranteed under RM, 
+whereas it is guaranteed 
+under EDF.
+• RM unfeasible schedule
+The smaller number of preemptions in EDF is a direct consequence 
+of the dynamic priority assignment, which at any instant privileges 
+the task with the earliest deadline, independently of tasks’ periods.
+Week 10 - Periodic Tasks Scheduling Algorithms
+41
+
+--- Page 42 ---
+Deadline 
+Monotonic 
+(DM)
+• DM is an extension of 
+the RM where tasks 
+can have relative 
+deadlines less than or 
+equal to their period
+• Assumption A3 is 
+relaxed
+• Each periodic task τi is 
+characterized by:
+Week 10 - Periodic Tasks Scheduling Algorithms
+42
+
+--- Page 43 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+DM Algorithm
+• According to the DM algorithm, each task is assigned a fixed 
+priority Pi inversely proportional to its relative deadline Di.
+• As a result, at any instant, the task with the shortest relative deadline is 
+executed.
+• Since relative deadlines are constant, DM is a static priority 
+assignment
+• As RM, DM is normally used on in a fully preemptive mode
+• The DM priority assignment is optimal, meaning that, if a task set 
+is schedulable by some fixed priority assignment then is also 
+schedulable by DM
+• The proof of DM optimality is like the one done for RM
+43
+
+--- Page 44 ---
+DM Schedulability Test
+• The feasibility of a task set with constrained deadlines could be 
+guaranteed using the utilization based test, introduced for the RM 
+algorithm, by reducing tasks’ periods to relative deadlines:
+• The test above is quite pessimistic, since the workload on the 
+processor would be overestimated.
+Week 10 - Periodic Tasks Scheduling Algorithms
+44
+
+--- Page 45 ---
+Less Pessimistic Schedulability Test for DM
+Derived by 
+noting that:
+Week 10 - Periodic Tasks Scheduling Algorithms
+45
+
+--- Page 46 ---
+Cont …
+✓This test is sufficient but not necessary for guaranteeing the 
+schedulability of the task set.
+✓The actual interference can be smaller than Ii, since τi may 
+terminate earlier
+▪
+To find a sufficient and necessary schedulability test for DM, the exact interleaving 
+of higher-priority tasks must be evaluated for each process.
+▪
+But this analysis is quite costly.
+Week 10 - Periodic Tasks Scheduling Algorithms
+46
+
+--- Page 47 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Response Time Analysis
+• However, the Response Time Analysis is an efficient method 
+for evaluating the exact interference on periodic tasks and 
+provides a sufficient and necessary schedulability test for DM
+47
+
+--- Page 48 ---
+Response Time Analysis
+• According to this method the longest response time Ri of a periodic task
+τi is computed, at the critical instant, as the sum of its computation time 
+and the interference Ii of the higher priority tasks:
+Week 10 - Periodic Tasks Scheduling Algorithms
+48
+
+--- Page 49 ---
+To solve Ri 
+equation we 
+should note that, 
+only
+a subset of 
+points in [0, Di] 
+need to be 
+checked for 
+this test as 
+given by this 
+algorithm.
+Week 10 - Periodic Tasks Scheduling Algorithms
+49
+
+--- Page 50 ---
+Example of Response Test Analysis
+•
+Consider the set of periodic tasks shown in Table 
+simultaneously activated at time t = 0.
+•
+In order to guarantee τ4, we have to calculate R4 and verify 
+that R4 ≤ D4.
+Week 10 - Periodic Tasks Scheduling Algorithms
+50
+
+--- Page 51 ---
+Since R4 ≤ D4, τ4 is schedulable within its deadline.
+If Ri ≤ Di for all tasks, we conclude that the task set 
+is schedulable by DM.
+Week 10 - Periodic Tasks Scheduling Algorithms
+51
+
+--- Page 52 ---
+Schedulability Test Algorithm for DM
+If Ri ≤ Di for all 
+tasks, we conclude 
+that the task set is 
+schedulable by 
+DM.
+Such a 
+schedulability test 
+can be performed 
+by the algorithm
+Week 10 - Periodic Tasks Scheduling Algorithms
+52
+
+--- Page 53 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Another Schedulabitity Test
+• Workload analysis test can also be used to provide a 
+necessary and sufficient test for checking the schedulability 
+of fixed priority systems with constrained deadlines (See 
+Section 4.5.3 in the reference book)
+53
+
+--- Page 54 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+EDF with Constrained Deadlines
+• Under EDF (dynamic priority assignment system), the 
+analysis of periodic tasks with deadlines less than or equal to 
+periods can be performed using the processor demand 
+criterion (See Section 4.6).
+54
+
+--- Page 55 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Comparison Between RM and EDF, Advantages
+• We presented fixed (RM) and dynamic (EDF) priority assignments
+for the problem of scheduling a set of independent and 
+preemptable periodic tasks.
+• Advantage comparisons:
+• Fixed priority approach -- simpler to implement.
+• If the ready queue is implemented as a multi-level queue with P priority
+levels (where P is the number of different priorities in the system) both 
+task insertion and extraction can be achieved in O(1) complexity.
+• Dynamic priority scheme – is in general better with respect to a 
+fixed priority algorithm
+• Except for very large task sets (consisting of hundreds of tasks), or for
+very slow processors, where the ready queue implementation might 
+give advantages in regard to reduce overheads.
+55
+
+--- Page 56 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Comparison Between RM and EDF, 
+Schedulability
+• Schedulability analysis, for the simple case of independent tasks with 
+relative deadlines equal to periods
+• RM -- guarantee test requires a pseudo-polynomial complexity, even in the 
+simple case of independent tasks with relative deadlines equal to periods,
+• EDF – guarantee test can be performed in O(n) for EDF.
+• Schedulability analysis in the general case in which deadlines can be less 
+than or equal to periods,
+• RM and EDF -- schedulability analysis becomes pseudo-polynomial for both 
+algorithms.
+• Under fixed-priority assignments, the feasibility of the task set can be tested 
+using the response time analysis,
+• Under dynamic priority assignments it can be tested using the processor 
+demand criterion.
+56
+
+--- Page 57 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Comparison Between RM and EDF, Processor 
+Utilization
+• Processor utilization criteria
+• EDF is able to exploit the full processor bandwidth
+• RM algorithm can only guarantee feasibility for task sets with utilization 
+less than 69%, in the worst case.
+• Other statistical results show that RM algorithm is able to feasibly schedule task 
+sets with a processor utilization up to about 88%
+• EDF will need extra computations for updating the absolute
+deadline at each job activation, however, EDF introduces less
+runtime overhead than RM, when context switches are taken 
+into account.
+• In fact, to enforce the fixed priority order, the number of
+preemptions that typically occur under RM is much higher than 
+under EDF.
+57
+
+--- Page 58 ---
+Week 10 - Periodic Tasks Scheduling Algorithms
+Homework
+• Exercises 4.1 to 4.7
+58

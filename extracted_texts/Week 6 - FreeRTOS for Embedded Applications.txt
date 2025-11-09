@@ -1,0 +1,935 @@
+
+--- Page 1 ---
+FreeRTOS for Embedded Applications
+• References:
+[1] Mastering the FreeRTOS Real Time Kernel, by Richard Barry, On-line
+Week 6 - FreeRTOS for Embedded Applications
+1
+free resource, 2016 … main reference for this section!!
+[2] FreeRTOS Reference Manual V10.0.0, On-line free resource, 2017
+• FreeRTOS: designed to be small and simple; the kernel has just a 
+few C files.
+• Other FreeRTOS versions:
+• a:FreeRTOS – provided by Amazon – it is FreeRTOS with libraries for IOT 
+support.
+• SAFERTOS: a complementary version of FreeRTOS, supporting safety- 
+critical real-time applications.
+• OPENRTOS: a commercially-licensed version of Amazon FreeRTOS.
+
+--- Page 2 ---
+The Top Directories in the FreeRTOS 
+Distribution ([1] Chapter 1)
+• FreeRTOS zip file contains source code for all the FreeRTOS 
+ports, and project files for all the FreeRTOS demo applications
+• The core FreeRTOS source code is contained in just two C files 
+that are common to all the FreeRTOS ports: tasks.c, and list.c
+Week 6 - FreeRTOS for Embedded Applications
+2
+
+--- Page 3 ---
+Creating a 
+FreeRTOS Project
+• Every FreeRTOS port 
+comes with at least 
+one pre-configured 
+demo application that 
+should build with no 
+errors or warnings.
+• It is recommended 
+that new projects are 
+created by adapting 
+one of these existing 
+projects
+Week 6 - FreeRTOS for Embedded Applications
+3
+
+--- Page 4 ---
+Week 6 - FreeRTOS for Embedded Applications
+Port specific data types used by FreeRTOS
+• FreeRTOS configures a periodic interrupt called the tick interrupt
+• For each port, the portmacro.h header contains two specific data 
+types:
+1. TickType_t: data type used to hold the tick count value, and to 
+specify times.
+2. BaseType_t: defines the base data type of the architecture 
+used.
+• 32-bit type for a 32-bit architecture; 16-bit type for a 16-bit architecture 
+and 8-bit type for an 8-bit architecture
+• Generally, it is used for return types that can take only a very limited 
+range of values, and for pdTRUE/pdFALSE type Booleans
+4
+
+--- Page 5 ---
+Week 6 - FreeRTOS for Embedded Applications
+Variable Names
+• Variables are prefixed with their type:
+• ‘c’ for char, ‘s’ for int16_t (short), ‘l’ int32_t (long), and ‘x’ for 
+BaseType_t and any other non-standard types (structures, task 
+handles, queue handles, etc.).
+• If a variable is unsigned, it is also prefixed with a ‘u’.
+• If a variable is a pointer, it is also prefixed with a ‘p’.
+• For example, a variable of type uint8_t will be prefixed with ‘uc’, 
+and a variable of type pointer to char will be prefixed with ‘pc’.
+5
+
+--- Page 6 ---
+Week 6 - FreeRTOS for Embedded Applications
+6
+Function Names
+• Functions are prefixed with both the type they return, and 
+the file they are defined within.
+• For example: vTaskPrioritySet() returns a void and is defined within 
+task.c.
+• xQueueReceive() returns a variable of type BaseType_t and is 
+defined within queue.c.
+• pvTimerGetTimerID() returns a pointer to void and is defined 
+within timers.c.
+• File scope (private) functions are prefixed with ‘prv’.
+
+--- Page 7 ---
+Macros
+Most macros are written in upper case, and prefixed 
+with lower case letters that indicate where the macro 
+is defined
+Week 6 - FreeRTOS for Embedded Applications
+7
+
+--- Page 8 ---
+Week 6 - FreeRTOS for Embedded Applications
+Heap Memory Management ([1] Chapter 2)
+• Dynamic memory allocation is a C programming concept, and not 
+a concept that is specific to either FreeRTOS or multitasking.
+• FreeRTOS allocates RAM each time a kernel object is created, and 
+frees RAM each time a kernel object is delete
+• FreeRTOS provides pvPortMalloc() function to replace malloc() 
+and vPortFree() to replace free()
+• Dynamic memory allocation schemes provided by general purpose 
+compilers are not always suitable for real-time applications.
+• This policy reduces design and planning effort, simplifies the API, 
+and minimizes the RAM footprint.
+8
+
+--- Page 9 ---
+Week 6 - FreeRTOS for Embedded Applications
+9
+Heap Memory Management
+• This topic objective is to give the readers a good 
+understanding of:
+• When FreeRTOS allocates RAM.
+• The five example memory allocation schemes supplied with 
+FreeRTOS.
+• Which memory allocation scheme to select.
+
+--- Page 10 ---
+Week 6 - FreeRTOS for Embedded Applications
+10
+Heap Memory Management
+• FreeRTOS treats memory allocation as part of the portable layer (as 
+opposed to part of the core code base)
+• Removing dynamic memory allocation from the core code base allow for 
+custom setup in various embedded systems
+• When FreeRTOS requires RAM, instead of calling malloc(), it calls 
+pvPortMalloc().
+• When RAM is being freed, instead of calling free(), the kernel calls 
+vPortFree().
+• FreeRTOS comes with five heap example implementations (See Ch. 2).
+• An applications can use one of the example code, or provide their own.
+• The five examples are defined in the heap_1.c, heap_2.c, heap_3.c, heap_4.c 
+and heap_5.c source files respectively, all of which are located in the 
+FreeRTOS/Source/portable/MemMang directory.
+
+--- Page 11 ---
+Week 6 - FreeRTOS for Embedded Applications
+11
+Heap_1 Scheme
+• Heap_1.c implements a very basic version of pvPortMalloc(), and 
+does not implement vPortFree().
+• Applications that could use this scheme:
+• Small system applications that never delete a task, or other kernel 
+object
+• Some commercially critical and safety critical systems
+• Critical systems often prohibit dynamic memory allocation due to uncertainties 
+associated with non-determinism, memory fragmentation, and failed 
+allocations—but Heap_1 is always deterministic, and cannot fragment memory.
+• The heap_1 allocation scheme subdivides a simple array into 
+smaller blocks as calls to pvPortMalloc() are made
+• the array (called the FreeRTOS heap) is statically declared, so will make 
+the application appear to consume a lot of RAM
+
+--- Page 12 ---
+Heap_1 Structure
+Week 6 - FreeRTOS for Embedded Applications
+12
+The total size (in bytes) of the 
+array is set by the 
+definitionconfigTOTAL_HEAP_SIZE 
+within FreeRTOSConfig.h.
+Each created task requires:
+1. a task control block (TCB) and
+2. a stack
+RAM being allocated from the heap_1 array each time a task is created
+• A shows the array before any tasks have been created—the entire 
+array is free.
+• B shows the array after one task has been created.
+• C shows the array after three tasks have been created.
+
+--- Page 13 ---
+Week 6 - FreeRTOS for Embedded Applications
+13
+Heap_2 and Heap_3 Structures
+• Heap_2 is retained in the FreeRTOS distribution for backward 
+compatibility, but its use is not recommended for new designs
+• Heap_2 works by subdividing an array into smaller blocks but 
+allows memory to be freed
+• Uses best fit algorithm to allocate memory to ensure that 
+pvPortMalloc() choses the best block size that is closest in size to the 
+number of bytes requested
+• The scheme is not deterministic
+• Heap_3 uses the standard library malloc() and free() functions
+• So, the size of the heap is defined by the linker configuration, and the 
+configTOTAL_HEAP_SIZE setting has no affect
+
+--- Page 14 ---
+Week 6 - FreeRTOS for Embedded Applications
+14
+Heap_4 Scheme
+Applications: applications that repeatedly allocate and free 
+different sized blocks of RAM.
+• Heap_4 works by subdividing an array into smaller blocks.
+• The initial array is statically declared, and dimensioned by 
+configTOTAL_HEAP_SIZE,
+• This will make the application appear to consume a lot of RAM
+• Heap_4 uses a first fit algorithm to allocate memory but unlike
+heap_2, heap_4 joins adjacent free blocks of memory into a
+single larger block, which minimizes the risk of memory 
+fragmentation.
+• The first fit algorithm ensures pvPortMalloc() uses the first free
+block of memory that is large enough to hold the number of 
+bytes requested
+
+--- Page 15 ---
+Week 6 - FreeRTOS for Embedded Applications
+Heap_4 Example Scenario
+• Scenario:
+• The heap contains three blocks of free memory in the order:
+• 5 bytes, 200 bytes, and 100 bytes, respectively.
+• Then, pvPortMalloc() is called to request 20 bytes of RAM.
+• How it works?
+• The first free block of RAM into which the requested number of 
+bytes will fit is the 200-byte block
+• So pvPortMalloc() splits the 200-byte block into one block of 20 bytes, and 
+one block of 180 bytes, before returning a pointer to the 20-byte block.
+• The new 180-byte block remains available to future calls to 
+pvPortMalloc().
+15
+
+--- Page 16 ---
+Heap_4 
+Scheme
+• Heap_4 combines adjacent free blocks into a single larger block, minimizing the 
+risk of fragmentation
+• Note: Heap_5 scheme is similar to heap_4 scheme.
+(A) …;
+(B) …;
+(C) …;
+(D) …;
+(E) …;
+(F) …
+Week 6 - FreeRTOS for Embedded Applications
+16
+
+--- Page 17 ---
+Week 6 - FreeRTOS for Embedded Applications
+Task Management ([1] Chapter 3)
+• This section covers:
+• How FreeRTOS allocates processing time to each task within an 
+application.
+• How FreeRTOS chooses which task should execute at any given 
+time.
+• How the relative priority of each task affects system behavior.
+• The states that a task can exist in.
+• How to implement tasks and other task related concepts
+• The concepts in this chapter are fundamental to 
+understanding how to use FreeRTOS in an application
+17
+
+--- Page 18 ---
+Week 6 - FreeRTOS for Embedded Applications
+18
+Task Management: Task Functions
+• Tasks in FreeRTOS are implemented as C functions
+• Important about the task prototype is that it must return void 
+and take a void pointer parameter:
+void ATaskFunction(void *pvParameters); 
+Task features:
+• It is a small program on its own
+• It has an entry point
+• Will normally run as an infinite loop, and will not exit
+• Must not contain a ‘return’ statement and must not be allowed to 
+execute past the end of the function
+• If a task is no longer required, it should be deleted
+
+--- Page 19 ---
+Week 6 - FreeRTOS for Embedded Applications
+19
+void ATaskFunction( void *pvParameters )
+{
+/* Variables can be declared just as per a normal function. Each instance of a task created using this example function will 
+have its own copy of the lVariableExample variable. This would not be true if the variable was declared static – in which 
+case only one copy of the variable would exist, and this copy would be shared by each created instance of the task. (The 
+prefixes added to variable names are described in section 1.5, Data Types and Coding Style Guide.) */
+int32_t lVariableExample = 0;
+/* A task will normally be implemented as an infinite loop. */ 
+for( ;; )
+{
+/* The code to implement the task functionality will go here. */
+}
+/* Should the task implementation ever break out of the above loop, then the task must be deleted before reaching the 
+end of its implementing function. The NULL parameter passed to the vTaskDelete() API function indicates that the task to 
+be deleted is the calling (this) task. The convention used to name API functions is described in section 0, Projects that use a 
+FreeRTOS version older than V9.0.0 must build one of the heap_n.c files. From FreeRTOS V9.0.0 a heap_n.c file is only 
+required if configSUPPORT_DYNAMIC_ALLOCATION is set to 1 in FreeRTOSConfig.h or if 
+configSUPPORT_DYNAMIC_ALLOCATION is left undefined. Refer to Chapter 2, Heap Memory Management, for more 
+information. Data Types and Coding Style Guide. */
+vTaskDelete( NULL );
+}
+Task Structure
+
+--- Page 20 ---
+Top Level Task States
+• An application can consist of many tasks
+• If the processor running the real-time application contains a single core, 
+then only one task can execute at any given time
+• The FreeRTOS scheduler is the only entity that can switch a task in and 
+out from states.
+Week 6 - FreeRTOS for Embedded Applications
+20
+
+--- Page 21 ---
+The 
+xTaskCreate() 
+API Function
+Week 6 - FreeRTOS for Embedded Applications
+Parameters passed to the xTaskCreate() function:
+• pvTaskCode: a pointer to the function that implements the task
+• pcName: a descriptive name for the task; used mainly by user as a debugging aid
+• usStackDepth: defines the size in words of the tasks’ stack that is allocated at 
+creation of the task
+• pvParameters: a parameter of type pointer to void ( void* ). The value assigned to 
+pvParameters is the value passed into the task.
+• uxPriority: defines the priority at which the task will execute; 0 is the lowest 
+priority here
+• pxCreatedTask: is used to pass a handle to the task being created. This handle can
+then be used to reference the task in API calls that; pxCreatedTask can be set to 
+NULL when not needed.
+21
+
+--- Page 22 ---
+Example 1: Create two simple tasks, then start the tasks executing
+Week 6 - FreeRTOS for Embedded Applications
+22
+
+--- Page 23 ---
+Example 1: Task 1
+Week 6 - FreeRTOS for Embedded Applications
+23
+
+--- Page 24 ---
+Example 1: Task 2
+Week 6 - FreeRTOS for Embedded Applications
+24
+
+--- Page 25 ---
+Example 1: Execution Results
+Week 6 - FreeRTOS for Embedded Applications
+25
+
+--- Page 26 ---
+Example 2: 
+Using the Task 
+Parameter
+ENGG4420: Developed by Radu Muresan, F22 
+291
+• The 
+pvParameters 
+parameter to the 
+xTaskCreate() 
+function is used 
+to pass the text 
+string into the 
+task.
+Week 6 - FreeRTOS for Embedded Applications
+26
+
+--- Page 27 ---
+Example 2: 
+Task
+Week 6 - FreeRTOS for Embedded Applications
+27
+
+--- Page 28 ---
+Week 6 - FreeRTOS for Embedded Applications
+28
+Task Priorities
+• uxPriority parameter of the xTaskCreate() API function assigns an 
+initial priority to the task being created.
+• There is a maximum nr of priorities, configurable
+• The priority can be changed by using the vTaskPrioritySet()
+• The FreeRTOS scheduler will ensure that the highest priority task 
+that is available to run is running
+• If tasks have the same priority a round robin scheme is used
+• The FreeRTOS scheduler can use one of two methods 
+(configurable) to decide which task will be in the Running state
+• Generic method: implemented in C and can be used with all the 
+FreeRTOS architecture ports.
+• Architecture optimized method: uses a small amount of assembler 
+code, and is faster than the generic method.
+
+--- Page 29 ---
+Week 6 - FreeRTOS for Embedded Applications
+29
+Time Measurement and the Tick Interrupt
+• A periodic interrupt called the “tick interrupt” is used by an RTOS 
+to measure time delays and time slices
+• An interrupt is issued at the end of a tick interrupt and the scheduler 
+will be invoked
+• The length of the time slice is effectively set by the tick interrupt
+frequency, which is configured by the application-defined
+configTICK_RATE_HZ compile time configuration constant within 
+FreeRTOSConfig.h.
+• For example, if configTICK_RATE_HZ is set to 100 (Hz), then the time 
+slice will be 10 milliseconds.
+• The time between two tick interrupts is called the ‘tick period’.
+• One time slice (used by Round-Robin scheduling technique) equals one 
+tick period
+
+--- Page 30 ---
+Tick Interrupt 
+Executing
+• FreeRTOS API calls always 
+specify time in multiples 
+of tick periods -> ‘ticks’.
+• The pdMS_TO_TICKS() 
+macro converts a time 
+specified in milliseconds 
+into a time specified in 
+ticks.
+• The resolution available 
+depends on the defined 
+tick frequency
+Week 6 - FreeRTOS for Embedded Applications
+30
+
+--- Page 31 ---
+Example 3: 
+Experimenting 
+with Priorities
+Week 6 - FreeRTOS for Embedded Applications
+31
+• The scheduler will always ensure that the highest priority task that 
+is able to run is the scheduled task
+• What happens with Example 2 when we have tasks with different 
+priorities?
+
+--- Page 32 ---
+Example 3: Execution Pattern
+Q: Why only Task 2 
+runs?
+Week 6 - FreeRTOS for Embedded Applications
+32
+
+--- Page 33 ---
+Full Task State 
+Machine
+• To make tasks useful and run a 
+different priorities they must be re- 
+written to be event-driven
+• An event-driven task has work 
+(processing) to perform only after the 
+occurrence of an event that triggers 
+it … it can enter running state …
+• States:
+• Blocked …
+• Suspended …
+• Ready …
+• Running …
+Week 6 - FreeRTOS for Embedded Applications
+33
+
+--- Page 34 ---
+Week 6 - FreeRTOS for Embedded Applications
+299
+34
+
+--- Page 35 ---
+Example 4. Blocked state used to create a delay
+Replace the 
+delay loop 
+from 
+previous 
+examples 
+with a delay 
+event
+Week 6 - FreeRTOS for Embedded Applications
+35
+
+--- Page 36 ---
+The execution 
+sequence
+** both tasks run 
+now … why? …
+** The execution of 
+the scheduler itself 
+is omitted for 
+simplicity
+**The idle task is 
+created 
+automatically when 
+the scheduler is 
+started
+Week 6 - FreeRTOS for Embedded Applications
+36
+
+--- Page 37 ---
+Week 6 - FreeRTOS for Embedded Applications
+37
+Example 5. Converting the example tasks to 
+use vTaskDelayUntil()
+• Using an RTOS can significantly increase the spare processing 
+capacity simply by allowing an application to be completely 
+event driven.
+• The two tasks created in Example 4 are periodic tasks but 
+using vTaskDelay() does not guarantee that the frequency at 
+which they run is fixed, as the time at which the tasks leave 
+the Blocked state is relative to when they call vTaskDelay().
+• Converting the tasks to use vTaskDelayUntil() instead of 
+vTaskDelay() solves this potential problem.
+
+--- Page 38 ---
+Q: How this 
+event delay 
+vTaskDelayUntil 
+(…) is different 
+than the 
+previous event 
+delay 
+vTaskDelay(…)
+Week 6 - FreeRTOS for Embedded Applications
+38
+
+--- Page 39 ---
+Example 6: Combining Blocking and Non- 
+Blocking States
+• Two tasks are created at priority 1 and are of continuous processing 
+type tasks; these task are always in Ready or Running state.
+Week 6 - FreeRTOS for Embedded Applications
+39
+
+--- Page 40 ---
+Example 6: Periodic Task
+• A third task is created at priority 2 and is periodic type; so, it uses
+vTaskDelayUntil() API function to place itself into the Blocked state 
+between each print iteration.
+Week 6 - FreeRTOS for Embedded Applications
+40
+
+--- Page 41 ---
+Example 6: 
+Execution 
+pattern
+Week 6 - FreeRTOS for Embedded Applications
+41
+
+--- Page 42 ---
+Week 6 - FreeRTOS for Embedded Applications
+The Idle Task and the Idle Task Hook
+• The idle task has the lowest priority (priority zero)
+• It is possible to add application specific functionality directly 
+into the idle task through the use of an idle hook (or idle 
+callback) function.
+• Common uses for the idle task hook:
+• Executing low priority, background, or continuous processing 
+functionality
+• Measuring the amount of spare processing capacity
+• Placing the processor into a low power mode
+42
+
+--- Page 43 ---
+Example 7: Use of an Idle Hook Function in 
+Example 4
+Example 4 created a lot of idle time—time when the Idle task is executing because 
+both application tasks are in the Blocked state … how can we make use of this time?
+Week 6 - FreeRTOS for Embedded Applications
+43
+
+--- Page 44 ---
+Week 6 - FreeRTOS for Embedded Applications
+44
+
+--- Page 45 ---
+Week 6 - FreeRTOS for Embedded Applications
+45
+Scheduling Algorithms, Task States
+• The task that is actually running (using processing time) is in 
+the Running state.
+• Tasks that are not running and are not in either the Blocked 
+state or the Suspended state, are in the Ready state.
+• Tasks in the Ready state are available to be selected by the 
+scheduler to enter the Running state.
+• The scheduler will always choose the highest priority Ready 
+state task to enter the Running state.
+=> The scheduler needs scheduling algorithms!!!
+
+--- Page 46 ---
+Week 6 - FreeRTOS for Embedded Applications
+46
+Scheduling Algorithms
+• The scheduling algorithm is the software routine that 
+decides which Ready state task to transition into the Running 
+state.
+• FreeRTOS provides three configuration constants within 
+FreeRTOSConfig.h that can affect the scheduling algorithm:
+• ConfigUSE_PREEMPTION
+• ConfigUSE_SLICING
+• configUSE_TICKLESS_IDLE
+• Scheduler can be set to be preemptive and use time slicing 
+for (Round Robin Scheduling) for tasks at same priority.
+
+--- Page 47 ---
+Week 6 - FreeRTOS for Embedded Applications
+Scheduling Algorithm Settings
+1. Prioritized Pre-emptive Scheduling with Time Slicing: when 
+configUSE_PREEMPTION set to 1 and 
+configUSE_TIME_SLICING set to 1
+2. Prioritized Pre-emptive Scheduling without Time Slicing: 
+when configUSE_PREEMPTION set to 1 and 
+configUSE_TIME_SLICING set to 0
+3. Co-operative Scheduling: when configUSE_PREEMPTION 
+set to 0 and configUSE_TIME_SLICING set to any value
+47
+
+--- Page 48 ---
+1. Fixed Priority Pre-emptive Scheduling with Time Slicing 
+Algorithm Example – Unique Priority Tasks Scenario
+Week 6 - FreeRTOS for Embedded Applications
+48
+All FreeRTOS inter- 
+task 
+communication 
+mechanisms (task 
+notifications, 
+queues, 
+semaphores, event 
+groups, etc.) can 
+be used to signal 
+events and 
+unblock tasks in 
+this way.
+
+--- Page 49 ---
+1. Fixed Priority Pre-emptive Scheduling with Time 
+Slicing Algorithm Example – Time Slicing Tasks Scenario
+If configIDLE_SHOULD_YIELD is set to 0 then the Idle task will remain in the Running state 
+for the entirety of its time slice, unless it is preempted by a higher priority task.
+Week 6 - FreeRTOS for Embedded Applications
+49
+
+--- Page 50 ---
+1. The Effect of configIDLE_SHOULD_YIELD
+If configIDLE_SHOULD_YIELD is set to 1 then the Idle task will yield (voluntarily 
+give up whatever remains of its allocated time slice) on each iteration of its loop 
+if there are other Idle priority tasks in the Ready state.
+Week 6 - FreeRTOS for Embedded Applications
+50
+
+--- Page 51 ---
+2. Prioritized Pre- 
+emptive
+Scheduling 
+without Time
+Slicing
+Week 6 - FreeRTOS for Embedded Applications
+51
+With no time slicing scheduling, the scheduler will only select a new 
+task to enter the Running state when either:
+1. A higher priority task enters the Ready state.
+2. The task in the Running state enters the Blocked or Suspended state
+
+--- Page 52 ---
+3. Co-
+Operating 
+Scheduling
+Week 6 - FreeRTOS for Embedded Applications
+52
+Co-operative scheduler: a context switch will only occur when the Running
+state task enters the Blocked state, or the Running state task explicitly yields (manually
+requests a re-schedule) by calling taskYIELD(). Tasks are never pre-empted, so time slicing 
+cannot be used.
+
+--- Page 53 ---
+Week 6 - FreeRTOS for Embedded Applications
+53
+Task Communication Support ([1] Chapter 4)
+• Queues provide task-to-task, task-to-interrupt and interrupt- 
+to-task communication
+• A queue can hold a finite number of fixed size data items
+• Both the length and the size of each data item are set when 
+the queue is created
+• Queues are normally used as FIFO buffers where data is 
+written to the end (tail) of the queue and removed from the 
+front (head) of the queue.
+
+--- Page 54 ---
+Task-to-Task 
+Communication
+An example 
+sequence of 
+writes to, and 
+reads from a 
+queue, in FIFO 
+mode.
+Week 6 - FreeRTOS for Embedded Applications
+54
+
+--- Page 55 ---
+Cont …
+Week 6 - FreeRTOS for Embedded Applications
+55
+
+--- Page 56 ---
+Week 6 - FreeRTOS for Embedded Applications
+56
+Queue Behavior Implementation
+• There are two implementation techniques:
+• Queue by copy
+• the data sent to the queue is copied byte for byte into the queue.
+• Queue by reference
+• the queue only holds pointers to the data sent to the queue, not the data 
+itself
+• FreeRTOS uses the queue by copy method
+• Queuing by copy is considered to be simultaneously more 
+powerful and simpler to use than queueing by reference because:
+• …
+
+--- Page 57 ---
+Week 6 - FreeRTOS for Embedded Applications
+57
+Using Queues
+• Queues are OS objects that can be accessed by any task or 
+ISR that knows of their existence. Any number of tasks can 
+write to the same queue, and any number of tasks can read 
+from the same queue.
+• In practice it is very common for a queue to have multiple 
+writers, but much less common for a queue to have multiple 
+readers.
+
+--- Page 58 ---
+Week 6 - FreeRTOS for Embedded Applications
+58
+Blocking on Queues
+• Blocking on Queue Reads
+• A task can optionally specify a ‘block’ time on queue reads so the task 
+will be in the Blocked state while waiting for data to be available from 
+the queue, should the queue already be empty
+• Blocking on Queue Writes
+• A block time on queue writes is the maximum time the task should be 
+held in the Blocked state to wait for space to become available on the 
+queue, should the queue already be full.
+• Blocking on Multiple Queues
+• Queues can be grouped into sets, allowing a task to enter the Blocked 
+state to wait for data to become available on any of the queues in set
+
+--- Page 59 ---
+Week 6 - FreeRTOS for Embedded Applications
+59
+Using a Queue; Common API Functions
+• The xQueueCreate() – must create a queue before use
+• Queues are referenced by handles, which are variables of type 
+QueueHandle_t.
+• xQueueSendToBack() and xQueueSendToFront() – sends an 
+item to a queue
+• FreeRTOS provides interrupt-safe versions for these functions 
+xQueueSendToFrontFromISR() and xQueueSendToBackFromISR()
+• The xQueueReceive() – receives an item from a queue
+• The interrupt-safe version is xQueueReceiveFromISR()
+• uxQueueMessagesWaiting() -- query the number of items 
+that are currently in a queue.
+
+--- Page 60 ---
+Week 6 - FreeRTOS for Embedded Applications
+60
+
+--- Page 61 ---
+Week 6 - FreeRTOS for Embedded Applications
+61
+Queue Usage Example; Blocking when 
+receiving from a queue
+• Here we create a queue and send data to the queue from 
+multiple tasks, and data being received from the queue by a task.
+• The queue can hold data items of type int32_t.
+• The tasks that send to the queue do not specify a block time, whereas 
+the task that receives from the queue does.
+• The priority of the tasks that send to the queue are lower than 
+the priority of the task that receives from the queue.
+• As a result, the queue should never contain more than one item 
+because, as soon as data is sent to the queue the receiving task will 
+unblock, pre-empt the sending task, and remove the data—leaving the 
+queue empty once again.
+
+--- Page 62 ---
+ENGG4420: Developed by Radu Muresan, F22 
+327
+Example 
+10:
+main()
+Week 6 - FreeRTOS for Embedded Applications
+62
+
+--- Page 63 ---
+ENGG4420: Developed by Radu Muresan, F22
+Example 10: 
+vSenderTask()
+63
+Week 6 - FreeRTOS for Embedded Applications
+
+--- Page 64 ---
+ENGG4420: Developed by Radu Muresan, F22
+Example 10: 
+vReceiverTask()
+64
+Week 6 - FreeRTOS for Embedded Applications
+
+--- Page 65 ---
+Week 6 - FreeRTOS for Embedded Applications
+65
+
+--- Page 66 ---
+Receiving Data from Multiple Sources: Example 11
+Week 6 - FreeRTOS for Embedded Applications
+Problem: receiving task 
+needs to know where 
+the data comes from to 
+determine how data 
+should be processed.
+Solution: use a single 
+queue to transfer 
+structures with both:
+• the value of the data
+• the source of the 
+data
+66
+
+--- Page 67 ---
+See Example 
+11;
+FreeRTOS 
+Book!
+Week 6 - FreeRTOS for Embedded Applications
+67
+
+--- Page 68 ---
+Week 6 - FreeRTOS for Embedded Applications
+Resource Management (Chapter 7, Section 7.3)
+• A Mutex is a special type of binary semaphore that is used to 
+control access to a resource that is shared between two or more 
+tasks
+• The mutex in a mutual exclusion scenario can be thought as a token 
+that is associated with the resource being shared
+• A mutex can be used for mutual exclusion access and a 
+semaphore can be used for synchronization. What is the 
+difference in this scenarios?
+• A semaphore used for mutual exclusion must always be returned
+• A semaphore used for synchronization is normally discarded and not 
+returned
+• See Section 6.4 (Binary Semaphores used for Synchronization)
+68
+
+--- Page 69 ---
+Mutual 
+Exclusion 
+Implemented 
+using a Mutex
+ENGG4420: Developed by Radu Muresan, F22
+Scenario:
+• Task A accesses the 
+resource by 
+becoming first the 
+mutex (token) 
+holder
+• Task B is not 
+allowed to access 
+the resource
+Week 6 - FreeRTOS for Embedded Applications
+69
+
+--- Page 70 ---
+Mutual 
+Exclusion 
+Implemented 
+using a Mutex
+ENGG4420: Developed by Radu Muresan, F22
+Scenario:
+• Task B, opts to 
+block and wait for 
+the mutex
+• Task A returns the 
+mutex
+• Task B is now 
+allowed to access 
+the resource
+Week 6 - FreeRTOS for Embedded Applications
+70
+
+--- Page 71 ---
+ENGG4420: Developed by Radu Muresan, F22 
+336
+Utilizing a 
+Mutex
+Week 6 - FreeRTOS for Embedded Applications
+71
+
+--- Page 72 ---
+Example 20. prvNewPrintString() to use a Mutex
+Week 6 - FreeRTOS for Embedded Applications
+72
+vPrintString() 
+function can be 
+treated as a 
+resource:
+• prvNewPrintStr 
+ing(), controls 
+standard out 
+using a mutex 
+rather than 
+locking the 
+scheduler
+
+--- Page 73 ---
+Week 6 - FreeRTOS for Embedded Applications
+73
+
+--- Page 74 ---
+Week 6 - FreeRTOS for Embedded Applications
+74
+
+--- Page 75 ---
+Week 6 - FreeRTOS for Embedded Applications
+75
+
+--- Page 76 ---
+Week 6 - FreeRTOS for Embedded Applications
+Use of the Mutex for Solving Priority Inversion
+• See Examples 21 (Homework)
+76
+
+--- Page 77 ---
+Week 6 - FreeRTOS for Embedded Applications
+End of FreeRTOS Basics
+• Other topics not covered:
+• Software timers (Chapter 5)
+• Interrupt management (Chapter 6)
+• Event groups (Chapter 8)
+• Homework:
+• From FreeRTOS section, review the examples and homework given 
+and understand the task diagrams presented
+77

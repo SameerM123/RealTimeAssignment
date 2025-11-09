@@ -1,0 +1,866 @@
+
+--- Page 1 ---
+Context Switching
+• Task Context: typically consists of the CPU 
+registers utilized by the task while executing.
+• Context Switch: when the OS saves the 
+current task’s context into the current task’s 
+stack and restores the context of the new task 
+and resumes execution of that task.
+• Context switching adds overhead
+• The context switch code is part of a 
+processor’s port
+• A port is the code needed to adapt μC/OS-III to 
+the desired processor
+ENGG*4420
+Week 4 - Real Time Operating Systems
+1
+
+--- Page 2 ---
+Stack Frame for a 
+Ready Task
+• The stack frame for a ready 
+task is pre-initialized by OS 
+in a similar way as an 
+interrupt just occurred
+• Task stack pointer …
+• Interrupt stack pointer …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+2
+
+--- Page 3 ---
+Types of Context Switch
+1. Task level context switch
+• This type of context switch is performed by the kernel by calling 
+OSCtxSw() which is invoked by the macro OS_Task_SW()
+• OSCtxSw() function is called when a new high priority task needs 
+to execute
+2. ISR context switch
+• This type of context switch is implemented by the kernel by 
+OSIntCtxSw() function.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+3
+
+--- Page 4 ---
+Task Level Context 
+Switch Explained
+• The task level scheduler 
+OSSched() calls OSCtxSw()
+• Prior to calling OSCtxSw() 
+function the variable and 
+data structures involved 
+look as in the diagram
+• (1) …
+• (2) …
+• (3) …
+• (4) …
+• (5) …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+4
+
+--- Page 5 ---
+Executing the 
+Task Level 
+Context Switch
+• (1) OSCtxSw() begins 
+by saving the SR and 
+PC of the current task 
+onto the current 
+task’s stack
+• (2) …
+• (3) …
+• (4) …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+5
+
+--- Page 6 ---
+ISR Level Context 
+Switch Explained
+• OSIntCtxSw() (see
+os_cpu_a.asm) is called
+when the ISR level
+scheduler (OSIntExit())
+determines that a new high
+priority task is ready to 
+execute
+• Prior to calling
+OSIntCtxSw() the data
+structures is like in the 
+diagram
+• At interrupt, the CPU
+registers of the current task
+are automatically saved 
+onto the task stack
+ENGG*4420
+Week 4 - Real Time Operating Systems
+6
+
+--- Page 7 ---
+Operations 
+Performed by 
+OSIntCtxSw()
+• The second half 
+o the context 
+switch is done 
+by OSIntCtxSw()
+• (1) …
+• (2) …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+7
+
+--- Page 8 ---
+Interrupt Management in uC/OS-III
+• An interrupt is a hardware mechanism used to inform the CPU that an 
+asynchronous event occurred.
+• When interrupts are recognized by CPU, some specific hardware 
+operations take place internally to CPU
+• The CPU saves part (or all) of its context and jumps to a special routine called 
+ISR
+• The ISR processes the event, and – upon completion of the ISR – the 
+program either returns to the interrupted task, or the highest priority 
+task, if the ISR made a higher priority task ready-to-run.
+• Microprocessors allow interrupts to be masked, disabled or enabled, etc.
+• However, in real-time environments, interrupts should be disabled as 
+little as possible
+ENGG*4420
+Week 4 - Real Time Operating Systems
+8
+
+--- Page 9 ---
+Important Time Specifications of a Real-Time 
+Kernel
+• Interrupt disable time
+• Is the maximum amount of time that interrupts are disabled by the kernel – 
+all real-time systems disable interrupts to manipulate critical sections of code
+• Interrupt response
+• Is defined as the time between the receiving an interrupt signal and the start 
+of the user code that handles the interrupt
+• Interrupt recovery
+• Is defined as the time required for the processor to return to the interrupted 
+code or to a higher priority task
+• Task latency
+• Is defined as the time it takes from the time interrupt occurs to the time task 
+level code resumes
+ENGG*4420
+Week 4 - Real Time Operating Systems
+9
+
+--- Page 10 ---
+Handling CPU Interrupts
+• In most cases, an 
+interrupt controller 
+captures all of the 
+different interrupts 
+presented to the 
+processor
+• CPUs interrupts 
+models:
+• All interrupts vector to 
+a single interrupt 
+handler.
+• Each interrupt vectors 
+directly to an interrupt 
+handler
+ENGG*4420
+Week 4 - Real Time Operating Systems
+10
+
+--- Page 11 ---
+Typical uC/OS-III Interrupt Service Routine
+Case 1: ISR signals or 
+sends a message to 
+a task
+• (1) to (6) … 
+prologue …
+• (8) … further 
+processing …
+• (9) … must call this
+OS function …
+• (9) to (11) … 
+epilogue …
+(8) … as a general rule, keep the ISRs short. The ISR should signal or send a 
+message to a task and that task will perform the actual interrupt service.
+The ISR will call one of the following functions:
+OSSemPost(), OSTaskSemPost(), OSFlagPost(), OSQPost() or OSTaskQPost().
+ENGG*4420
+Week 4 - Real Time Operating Systems
+11
+
+--- Page 12 ---
+Fast Interrupt Service Routine
+• Case 2: the ISR 
+does not signal a 
+task but performs 
+all the work quickly 
+in the ISR, then 
+consider writing the 
+ISR as a “Non 
+Kernel-Aware 
+Interrupt Service 
+Routine,”
+(4) Do not re-enable interrupts at this point since 
+another interrupt could make μC/OS-III calls, forcing a 
+context switch to a higher-priority task
+(5) Now you can take care of the interrupting device in 
+assembly language or call a C function, if necessary.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+12
+
+--- Page 13 ---
+Processor with 
+Multiple Interrupt 
+Priorities
+• There are some 
+processors that actually 
+supports multiple 
+interrupt levels as 
+shown
+ENGG*4420
+Week 4 - Real Time Operating Systems
+13
+
+--- Page 14 ---
+It’s important to note that since μC/OS-III cannot disable the non-kernel aware 
+interrupts, interrupt latency for these interrupts is very short.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+14
+
+--- Page 15 ---
+All Interrupts Vector to a Common Location
+Even though an interrupt controller is present in most designs, some CPUs still vector 
+to a common interrupt handler, and the ISR queries the interrupt controller to 
+determine the source of the interrupt.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+15
+
+--- Page 16 ---
+Every Interrupt Vectors to a Unique Location
+• If the interrupt controller vectors directly to the appropriate 
+interrupt handler, each of the ISRs that are actually used in 
+the application should be written in assembly language and 
+follow the typical uc/OS-III Interrupt Service Routine 
+guidelines (See MyISR structure).
+ENGG*4420
+Week 4 - Real Time Operating Systems
+16
+
+--- Page 17 ---
+uC/OS-III Event Posting from ISR
+• uC/OS-III handles event posting from interrupts in two ways:
+• Direct post method
+• Deferred post method
+• From an application and ISR code point of view these 
+methods are completely transparent
+• The programmer needs only change the configuration value 
+OS_CFG_ISR_POST_DEFERRED_EN to switch between the 
+two methods
+ENGG*4420
+Week 4 - Real Time Operating Systems
+17
+
+--- Page 18 ---
+Direct and Deferred Post 
+Methods for Event 
+Posting
+• (1) …; (2) …; (3) …;(4) …
+• (5) In the Direct Post
+Method, μC/OS-III must
+protect critical sections
+by disabling interrupts
+as some of these critical
+sections can be 
+accessed by ISRs
+• In the differed post
+method, instead of
+disabling interrupts to
+access critical sections,
+uC/OS-III locks the 
+scheduler …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+18
+
+--- Page 19 ---
+Characterizing the Interrupt Times for the 
+uC/OS-III Services
+• μC/OS-III disables interrupts while accessing critical sections
+• You can determine the interrupt latency, interrupt response,
+interrupt recovery, and task latency by adding the execution 
+times of the code involved for each:
+• Interrupt Latency = Maximum interrupt disable time;
+• Interrupt Response = Interrupt latency + Vectoring to the interrupt 
+handler + ISR prologue;
+• Interrupt Recovery = Handling of the interrupting device + Posting a 
+signal or a message to a task + OSIntExit() + OSIntCtxSw();
+• Task Latency = Interrupt response + Interrupt recovery + Time scheduler 
+is locked;
+• The post times calls can be measured by utilizing OS_TS_GET()
+ENGG*4420
+Week 4 - Real Time Operating Systems
+19
+
+--- Page 20 ---
+Pend List Data Structure for uC/OS-III
+• A pend list is similar to the Ready List, but it keeps track of tasks 
+waiting for an object to be posted.
+• In addition, the pend list is sorted by priority; the highest priority task 
+waiting on the object is placed at the head of the list, …
+• A pend list is a data structure of type OS_PEND_LIST, which 
+consists of three fields
+• Each kernel object using a pend list contains the same three 
+fields at the beginning of the kernel object that we called an 
+OS_PEND_OBJ.
+• Notice that the first field is always a “Type” …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+20
+
+--- Page 21 ---
+Pend List Data Structures
+OS_PEND_LIST
+A task is placed in a Pend List if waiting on: a semaphore to be 
+signaled, a mutual exclusion semaphore to be released, an event 
+flag group to be posted, or a message queue to be posted.
+A pend list is similar to the Ready List
+ENGG*4420
+Week 4 - Real Time Operating Systems
+21
+
+--- Page 22 ---
+There are particular OS internal functions that manipulate 
+entries in a pend list
+ENGG*4420
+Week 4 - Real Time Operating Systems
+22
+
+--- Page 23 ---
+Time Management
+• RTOS kernels generally require the provision of a periodic 
+interrupt to keep track of time delays and timeouts.
+• This periodic time source is called a clock tick and for uC/OS-III 
+should occur between 10 and 1000 times per second, or Hertz 
+(see OS_CFG_TICK_RATE_HZ in os_cfg_app.h)
+• The actual frequency of the clock tick depends on the 
+desired tick resolution of the application.
+• Note: a high frequency of the ticker will give higher overhead.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+23
+
+--- Page 24 ---
+uC/OS-III Time Management Services
+ENGG*4420
+Week 4 - Real Time Operating Systems
+24
+
+--- Page 25 ---
+Using OSTimeDly()
+• This function allows 3 
+modes of time delay: 
+relative, periodic, and 
+absolute
+• OSTimeDly() -- relative 
+usage
+• (1) …
+• (2) …
+• (3) …
+• (4) …
+• Problem: the delay is not 
+accurate
+ENGG*4420
+Week 4 - Real Time Operating Systems
+25
+
+--- Page 26 ---
+OSTimeDly() Relative, Time Delay Analysis
+• Assume that low priority 
+task (LPT) calls to delay for 2 
+ticks
+• (1): tick interrupt comes
+• (2): The execution time of 
+HPTs is unknown and can 
+vary
+• (3): LPT executes
+• (4): LPT requests time delay
+• (9): Due to execution time 
+of the HPTs, the time delay 
+is not exactly two ticks, as 
+requested.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+26
+
+--- Page 27 ---
+OSTimeDly() with 
+Periodic Usage
+(1) … OSTimeDly() …
+(2) … periodic option …
+This option allows delaying 
+the task until the tick 
+counter reaches a certain 
+periodic match value
+• This, ensures that the 
+spacing in time is always 
+the same as it is not 
+subject to CPU load 
+variations
+ENGG*4420
+Week 4 - Real Time Operating Systems
+27
+
+--- Page 28 ---
+OSTimeDly() with Absolute Usage
+• Absolute usage: the 
+“dly” parameter 
+corresponds to the 
+desired value of 
+OSTickCtr you want to 
+reach.
+• OSTickCtr value in this 
+case is normally 
+counted from the 
+power up time
+• Summary of the “opt” values based on 
+OSTickCtr values
+ENGG*4420
+Week 4 - Real Time Operating Systems
+28
+
+--- Page 29 ---
+Homework: Time Delay Functions
+1. Review the following time delay functions:
+a. OSTimeDlyHMSM()
+b. OSTimeDlyResume()
+c. OSTimeSet()
+d. OSTimeGet()
+e. OSTimeTick()
+2. Present a scenario of LPT, MPT, and HPT tasks using at least 
+2 tasks where the delayed tick value of the task varies with 
+the system load.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+29
+
+--- Page 30 ---
+Timer Management
+• Timer services are found in os_tmr.c file
+• Timer services, not time delay services, are enabled when setting 
+OS_CFG_TMR_EN to 1 in os_cfg.h
+• The resolution of the timer is set by the configuration constant: 
+OS_CFG_TMR_TASK_RATE_HZ, which is expressed in Hertz (Hz).
+• Timers are down counters that perform an action when the counter 
+reaches to zero
+• The action is performed by a callback function which is a user-declared 
+function.
+• The callback can be used to turn a light on/off, start a motor, etc.
+• But we should not make blocking calls within a callback function (i.e.,
+call OSTimeDly(), OSTimeDlyHMSM(), OS???Pend(), or anything that 
+causes the timer task to block or be deleted).
+ENGG*4420
+Week 4 - Real Time Operating Systems
+30
+
+--- Page 31 ---
+Timer Services
+ENGG*4420
+Week 4 - Real Time Operating Systems
+31
+
+--- Page 32 ---
+Working with Timers
+• A timer needs to be created; it can be started (or restarted) and 
+stopped as often as is necessary.
+• Timers operate in one of three modes: One-shot, Periodic (no initial 
+delay), and Periodic (with initial delay).
+ENGG*4420
+Week 4 - Real Time Operating Systems
+32
+
+--- Page 33 ---
+One-Shot Timers
+• A one-shot timer will 
+countdown from its 
+initial value, call the 
+callback function when 
+it reaches zero, and 
+stop
+• Once completed, the 
+timer needs to be 
+restarted by calling 
+OSTmrStart(), to be 
+activated
+ENGG*4420
+Week 4 - Real Time Operating Systems
+33
+
+--- Page 34 ---
+Application of One-Time Shot Timer
+• A one-shot timer can 
+be retriggered by 
+calling OSTmrStart() 
+before the timer 
+reaches zero.
+• This feature can be 
+used to implement 
+watchdogs and 
+similar safeguards.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+34
+
+--- Page 35 ---
+Periodic 
+With and 
+Without 
+Initial 
+Delay
+ENGG4420: Developed by Radu Muresan, F22
+ENGG*4420
+Week 4 - Real Time Operating Systems
+35
+
+--- Page 36 ---
+Timer Internals and Timer Task
+• See reference manual
+ENGG*4420
+Week 4 - Real Time Operating Systems
+36
+
+--- Page 37 ---
+Homework: Timers
+1. Study the functionality of one-shot timers and periodic 
+timers as described in the user manual
+2. Write an application that uses a timer to read an ADC from 
+a sensor and store the data in a queue. You should use 
+more than one task, so your application is a real-time 
+application. For example, you could use the sensor data in 
+a controller task or a monitoring task, etc.
+3. Think of an application where you could use the timer as a 
+safeguard
+ENGG*4420
+Week 4 - Real Time Operating Systems
+37
+
+--- Page 38 ---
+Resource Management in uC/OS-III
+• uC/OS-III provides services to manage shared resources
+• A shared resource is typically a variable (static or global), a data 
+structure, table (in RAM), or registers in an I/O device
+• When protecting a shared resource within a uC/OSIII application 
+is preferred to use mutual exclusion semaphores
+• It is important to ensure that each task has exclusive access to 
+the shared data to avoid contention and data corruption
+• See Example: Time of the day in the uC/OS-III documentation 
+(pp. 201)
+ENGG*4420
+Week 4 - Real Time Operating Systems
+38
+
+--- Page 39 ---
+Example of Shared 
+Resource Requirement
+Scenario:
+1) TimeofDay() task was preempted 
+by a HPT, after setting the Minutes = 
+0, due to some interrupt occurring …
+2) The HPT wants to know the current 
+time from the time-of-day module.
+3) Since the Hours were not 
+incremented prior to the interrupt, 
+the HPT will read the time incorrectly.
+Solution:
+The code that updates variables for 
+TimeOfDay() task must treat all 
+variables indivisibly (or atomically) 
+when preemtion is possible
+ENGG*4420
+Week 4 - Real Time Operating Systems
+39
+
+--- Page 40 ---
+Common Methods to Protect Shared 
+Resources
+• The most common methods of obtaining exclusive access to 
+shared resources and to create critical sections are:
+• disabling interrupts
+• disabling the scheduler
+• using semaphores
+• using mutual exclusion semaphores (a.k.a. a mutex)
+ENGG*4420
+Week 4 - Real Time Operating Systems
+40
+
+--- Page 41 ---
+Resource 
+Sharing 
+Methods
+ENGG*4420
+Week 4 - Real Time Operating Systems
+41
+
+--- Page 42 ---
+Resource Sharing without Objects Usage
+Disable/Enable interrupts method 
+will use uC/CPU services …
+(1)…
+(2)…
+(3)…
+(4)…
+Lock/Unlock scheduler method … 
+(1)…
+(2)…
+(3)…
+(4)…
+ENGG*4420
+Week 4 - Real Time Operating Systems
+42
+
+--- Page 43 ---
+Semaphores
+• Semaphore is a kernel object defined by OS_SEM data type
+• An application can have any number of semaphores
+• Types of semaphores:
+• Binary: takes two values, 0 or 1
+• Counting: takes values between 0 and 255; 65,535; or 
+4,294,967,295; depending on the data length used …
+• uC/OS-III keeps track of semaphore’s value and all tasks 
+waiting for the semaphore’s availability
+• ISRs are not allowed to use semaphores for sharing 
+resources
+ENGG*4420
+Week 4 - Real Time Operating Systems
+43
+
+--- Page 44 ---
+Semaphore Services
+• When semaphores are used for sharing resources, every semaphore 
+function must be called from a task and never from an ISR.
+• The same limitation does not apply when using semaphores for signaling.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+44
+
+--- Page 45 ---
+Binary Semaphore
+• A semaphore must be 
+created
+• A task that wants to acquire 
+a resource must perform a 
+pend (or wait) operation on 
+the semaphore
+• A task releases a semaphore 
+by performing a post (or 
+signal) operation on the 
+semaphore
+ENGG*4420
+Week 4 - Real Time Operating Systems
+45
+
+--- Page 46 ---
+Using a Semaphore to 
+Access a Shared 
+Resource
+• (1) …
+• (2) … timeout specified in 
+clock ticks …
+• (3) … specifies how to 
+wait …
+• Blocking …
+• Non-blocking …
+• (4) … time stamp post …
+• …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+46
+
+--- Page 47 ---
+Using a Semaphore 
+from Multiple Tasks 
+to Access a Shared 
+Resource
+• Another task, must use 
+the same procedure as 
+Task1
+• (1) …
+• …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+47
+
+--- Page 48 ---
+Semaphore Used for Tasks to Share I/O 
+Devices
+• Rule: to access the 
+device each task must 
+first obtain the device’s 
+key (semaphore)
+• Each task must know 
+about the existence of 
+the semaphore to access 
+the resource
+Device
+ENGG*4420
+Week 4 - Real Time Operating Systems
+48
+
+--- Page 49 ---
+Counting Semaphores 
+Example
+Counting semaphore is used when elements of 
+a resource can be used by more than one task 
+at the same time. Example, used in the 
+management of a buffer pool.
+ENGG*4420
+Week 4 - Real Time Operating Systems
+49
+
+--- Page 50 ---
+Semaphore Internals
+• See reference for semaphore data structures and pending 
+and posting
+ENGG*4420
+Week 4 - Real Time Operating Systems
+50
+
+--- Page 51 ---
+Priority 
+Inversion
+• What is priority inversion?
+• Follow the 3 tasks example
+• (1) … task L executes …
+• (2) … task L gets sem S …
+• (3) …
+• (4) …
+• (5) … task H wants sem S …
+• (7) …
+• (8) … task M starts executing …
+• (9) …
+• (10) …
+• (11) … task L releases sem S …
+• (12) …
+The priority of Task H has been 
+reduced to that of Task L since it 
+waited for a resource that Task L 
+owned
+ENGG*4420
+Week 4 - Real Time Operating Systems
+51
+
+--- Page 52 ---
+Mutual Exclusion 
+Semaphore: MUTEX
+• MUTEX is a special type
+of binary semaphore
+that eliminates the
+unbounded priority 
+inversion
+• …
+• (6) …
+• (7) …
+• (8) …
+• (9) …
+• (10) …
+• …
+ENGG*4420
+Week 4 - Real Time Operating Systems
+52
+
+--- Page 53 ---
+MUTEX Functions
+• A mutex is a kernel 
+object defined by the 
+OS_MUTEX data type
+• Mutex functionality is 
+based on the full-priority 
+inheritance protocol 
+implemented by uC/OSIII
+• ISRs cannot use a 
+MUTEX
+ENGG*4420
+Week 4 - Real Time Operating Systems
+53
+
+--- Page 54 ---
+Usage of
+MUTEXes
+ENGG*4420
+Week 4 - Real Time Operating Systems
+54
+
+--- Page 55 ---
+MUTEX Internals
+• A mutex is a kernel 
+object defined by 
+the OS_MUTEX data 
+type, which is 
+derived from the 
+structure os_mutex 
+(see os.h) as shown
+ENGG*4420
+Week 4 - Real Time Operating Systems
+55
+
+--- Page 56 ---
+Creating a MUTEX
+• A mutual 
+exclusion 
+semaphore 
+(mutex) must 
+be created 
+before it can be 
+used by an 
+application
+215
+ENGG*4420
+Week 4 - Real Time Operating Systems
+56
+
+--- Page 57 ---
+Pending 
+on a 
+Mutex
+ENGG4420: Developed by Radu Muresan, F22 
+216
+ENGG*4420
+Week 4 - Real Time Operating Systems
+57
+
+--- Page 58 ---
+Deadlock
+Scenario of deadlock:
+1. T1 executes before T2; T2 has a higher priority
+2. T1 deadlocks at (9) waiting for M2 and T2 deadlocks at (7)
+waiting for M1
+A deadlock, is a situation in which two tasks are each 
+unknowingly waiting for resources held by the other
+ENGG*4420
+Week 4 - Real Time Operating Systems
+58
+
+--- Page 59 ---
+Techniques Used to Avoid Deadlocks
+1. Each task should acquire all resources before proceeding, 
+and in the same order
+2. Always acquire resources in the same order
+3. Use timeouts on pend calls – this method doesn’t really 
+solve the deadlock, it just breaks it
+ENGG*4420
+Week 4 - Real Time Operating Systems
+59
+
+--- Page 60 ---
+Homework
+• Study all examples
+• Study the priority inversion scenario and understand the 
+difference between using semaphores and Mutex
+ENGG*4420
+Week 4 - Real Time Operating Systems
+60

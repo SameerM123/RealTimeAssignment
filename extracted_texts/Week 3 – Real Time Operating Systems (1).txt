@@ -1,0 +1,767 @@
+
+--- Page 1 ---
+Features Provided by uC/OS-III
+uC/OS-III Topic follows the Reference: uC/OS-III the Real-Time Kernel, 
+User’s Manual, by J. J. Labrosse … for further notes consult the 
+reference …
+• uC/OS-II and –III are currently maintained by Micrium Inc., a 
+subsidiary of Silicon Labs.
+• Source Code: μC/OS-III is provided in ANSI-C source form
+• Intuitive Application Programming Interface (API): μC/OS-III is 
+highly intuitive
+• Preemptive multitasking: μC/OS-III is a preemptive multi-tasking kernel
+• Round robin scheduling of tasks at equal priority: μC/OS-III 
+allows multiple tasks to run at the same priority level
+• Deterministic: Interrupt response with μC/OS-III is deterministic
+• Scalable: The footprint (both code and data) can be adjusted based on 
+the requirements of the application (between 5 to 24 Kbytes)
+• Portable: μC/OS-III can be ported to many microprocessors and 
+DSP processors
+• Commercial usage: avionics, medical equipment, data communications, 
+appliances, industrial control, consumer electronics, automotive, etc.
+Week 3 – Real Time Operating Systems
+1
+
+--- Page 2 ---
+uC/OS-III
+Architecture and Its 
+Relationship with 
+the Hardware
+See pp. 31 to 33 in 
+the reference …
+Week 3 – Real Time Operating Systems
+2
+
+--- Page 3 ---
+Week 3 – Real Time Operating Systems
+Getting Started with uC/OS-III
+Refer to pp. 51 to 65 in the reference book …
+• uC/OS-III provides a set of functions for the development of 
+application code
+• uC/OS-III functions offer services to manage tasks, semaphores, 
+message queues, mutual exclusion semaphores, etc.
+• An application can call uC/OS-III functions as any other function
+• We discuss two types of application structures that apply to 
+uC/OS-III:
+• Single task application
+• Multiple tasks application
+3
+
+--- Page 4 ---
+Single Task 
+Application: 
+app.c
+• What’s 
+happening in this 
+code?
+• (1) …
+• (2) …
+• (3) …
+• (4) …
+Week 3 – Real Time Operating Systems
+4
+
+--- Page 5 ---
+The Main 
+Program
+• The code lines
+• (1) …
+• (2) …
+• OSTaskCreate() 
+creates a task and 
+requires 13 
+arguments …
+Week 3 – Real Time Operating Systems
+5
+
+--- Page 6 ---
+Typical Task Implementation
+• A task is typically 
+implemented as an infinite 
+loop as shown in this 
+code.
+• Another implementation 
+of a task could be as run to 
+completion, where 
+while(1) statement is not 
+used.
+Week 3 – Real Time Operating Systems
+6
+
+--- Page 7 ---
+AppTaskStart()
+• Code lines:
+• (1) …
+• (2) …
+• (3) …
+• (4) …
+• (5) …
+• (6) …
+• (7) …
+• OSTimeDlyHMSM() …
+Week 3 – Real Time Operating Systems
+7
+
+--- Page 8 ---
+Multiple Tasks 
+Applications 
+with Kernel 
+Objects
+• Code lines:
+• (1) …
+• (2) …
+• (3) …
+• (4) …
+• (5) …
+Week 3 – Real Time Operating Systems
+8
+
+--- Page 9 ---
+The Main 
+Program
+• OSMutexCreate() …
+• OSQCreate() …
+• OSTaskCreate() …
+Week 3 – Real Time Operating Systems
+9
+
+--- Page 10 ---
+Application 
+Start Task
+• OSTaskCreate() …
+• OSTaskCreate() …
+• …
+Week 3 – Real Time Operating Systems
+10
+
+--- Page 11 ---
+Application Task 1
+• Code lines:
+• (1) …
+• (2) …
+• (3) …
+• (4) …
+• (5) …
+Week 3 – Real Time Operating Systems
+11
+
+--- Page 12 ---
+Application 
+Task 2
+• Code lines:
+• (1) …
+• (2) …
+• (3) …
+Week 3 – Real Time Operating Systems
+12
+
+--- Page 13 ---
+Week 3 – Real Time Operating Systems
+13
+
+--- Page 14 ---
+Critical Sections or Critical Regions
+Refer to pp. 66 to 71 in the reference book …
+• Critical section is code that needs to be treated indivisibly
+• There are many critical section of code contained in a kernel
+• Critical Section scenarios:
+• If a critical section is accessible by an ISR and a task, then protecting the 
+critical region is done by disabling interrupts
+• If a critical section is only accessible by task level code, the critical 
+section may be protected through use of a preemption lock.
+• Note: disabling the interrupts or locking the preemption for too 
+long defeats the purpose of real-time scheduling
+• uC/OS-III provides ways to measure the time duration while the 
+interrupts are disabled
+Week 3 – Real Time Operating Systems
+14
+
+--- Page 15 ---
+Week 3 – Real Time Operating Systems
+Critical Sections or Critical Regions
+• uC/OS-III will disable interrupts when accessing internal 
+critical sections
+• The OS uses uC/CPU macros for entering and leaving a 
+critical section:
+• CPU_CRITICAL_ENTER() and
+• CPU_CRITICAL_EXIT()
+15
+
+--- Page 16 ---
+Week 3 – Real Time Operating Systems
+Critical Sections or Critical Regions
+• A tasks can lock the scheduler and thus preventing the 
+preemption process of the OS
+• By locking the scheduler, the current task will be executing and 
+thus the method will prevent higher priority task to execute 
+while the scheduler is locked
+• Functions to lock and unlock scheduler are:
+• OSSchedLock()
+• OSSchedUnlock()
+• Interrupts are still recognized during scheduler locked state, but 
+the kernel will not switch to higher priority tasks.
+16
+
+--- Page 17 ---
+Week 3 – Real Time Operating Systems
+Task Management
+Refer to pp. 72 to 127 in the reference book …
+• uC/OS-III supports multitasking and supports any number of tasks
+• A task (also called a thread) is a simple program that thinks it has the 
+CPU all to itself.
+• Task usage:
+• Monitoring inputs
+• Updating outputs
+• Performing computations
+• Control loops
+• Update one or more displays
+• Reading buttons and keyboards
+• Communicating with other systems
+• Etc.
+17
+
+--- Page 18 ---
+Types of Tasks in uC/OS-III
+• Run-to-completion
+• Infinite loop
+• Example of run-to- 
+completion task
+• Note: a run-to 
+completion task 
+must delete itself
+Week 3 – Real Time Operating Systems
+18
+
+--- Page 19 ---
+Types of Tasks in 
+uC/OS-III
+• The infinite loop task is 
+common in embedded 
+systems because of the 
+repetitive work needed;
+• Reading inputs, 
+updating outputs, 
+control operations etc.
+• Important that each task 
+must make a service call 
+to OS to support 
+multitasking process.
+Week 3 – Real Time Operating Systems
+19
+
+--- Page 20 ---
+OSTaskCreate() Function
+• OS knows about the tasks after 
+they are created by:
+• OSTaskCreate() function
+• The function needs 13 
+parameters to be initialized: see 
+uC/OS-III API Reference for 
+arguments description
+• Common parameters to note are 
+task address, task priority, task 
+TCB, task stack, etc.
+Week 3 – Real Time Operating Systems
+20
+
+--- Page 21 ---
+The stack 
+and its 
+Descriptive 
+Arguments
+The stack is used to store 
+local variables, function 
+parameters, return 
+addresses and registers 
+during an interrupt. 
+p_stk_base …
+stk_limit … 
+stk_size …
+Week 3 – Real Time Operating Systems
+21
+
+--- Page 22 ---
+OSTaskCreate() 
+Role
+• When we call 
+OSTaskCreate (…) what 
+happens??
+• Step 1:
+• (1) …; (2) …; (3) …; (4) …;
+(5) …
+• Step 2:
+• Call OSTaskHook() …
+• Step 3:
+• Task placed in ready list …
+Week 3 – Real Time Operating Systems
+22
+
+--- Page 23 ---
+Example of 
+OSTaskCreate 
+() Usage
+Week 3 – Real Time Operating Systems
+23
+
+--- Page 24 ---
+Week 3 – Real Time Operating Systems
+Functionality of a Task
+• The task body can invoke other services, specifically:
+• Create another tasks
+• Suspend and resume other tasks
+• Post signals or messages to other tasks (OS???Post)
+• Share resources with other tasks.
+• Wait for events
+• Etc.
+24
+
+--- Page 25 ---
+Typical 
+Resources 
+with which a 
+Task Interacts
+• (1) …
+• (2) …
+• (3) …
+• (4) …
+Week 3 – Real Time Operating Systems
+25
+
+--- Page 26 ---
+Assigning Task Priorities
+• One method to assign task priorities is called rate monotonic 
+scheduling (RMS) which assign priorities based on how often 
+the tasks execute
+• The tasks with the highest rate (1/Ti) of execution are given 
+the highest priority
+• For a set of n tasks that use RMS priorities all task hard real- 
+time deadlines are met if the following inequality holds:
+Week 3 – Real Time Operating Systems
+26
+
+--- Page 27 ---
+Week 3 – Real Time Operating Systems
+Determining the Size of a Stack for a Task
+• The size of the stack required by a task is application specific and accounts for:
+• The nesting of all functions called by the task;
+• The number of local variables to be allocated by all functions called by the task;
+• The stack requirements for all nested ISRs
+• In addition, the stack will store all CPU registers and possible floating-point unit registers
+• You could manually figure out (tedious) the stack space needed by adding:
+• all the memory required by all function call nesting (1 pointer each function call for the 
+return address),
+• plus all the memory required by all the arguments passed in those function calls,
+• plus storage for a full CPU context (depends on the CPU),
+• plus another full CPU context for each nested ISRs (if the CPU doesn’t have a separate stack 
+to handle ISRs),
+• plus whatever stack space is needed by those ISRs.
+• Most likely you would not make the stack size that precise so you should multiply your 
+result by some safety factor, possibly 1.5 to 2.0
+27
+
+--- Page 28 ---
+Week 3 – Real Time Operating Systems
+Determining the Size of a Stack for a Task
+• Another method is to use the support of compilers/linkers 
+data provided in the link map.
+• For each function, the link map will indicate the worst-case stack 
+usage
+• We still need to add to that information:
+• The stack space for a full CPU context switch
+• Plus, another full CPU context for each nested ISR,
+• Plus, whatever space is needed by those ISRs
+• Then allow for a safety factor of 1.5 to 2.0.
+28
+
+--- Page 29 ---
+Week 3 – Real Time Operating Systems
+Stack Monitoring
+• Monitor stack usage at run-time while developing and testing the 
+product as stack overflows can occur and affect system behavior
+• Detecting task stack overflows can be done by (see reference):
+• Using Memory Management Unit (MMU) or a Memory Protection Unit (MPU)
+• hardware support to detect a task attempts to access invalid memory locations
+• Using a CPU with stack overflow detection
+• Supported by some CPU architectures to check some limits for the stack pointer register
+• Custom software-based stack overflow detection
+• Utilizes the OSTaskHook() function to implement this feature
+• Redzone stack overflow detection
+• This is a configurable feature in uC/OS-III version
+• Counting the amount of free stack space
+• Allocate a larger stack space, initialize it with zeros, then use a low priority task to count 
+how much space has been used.
+29
+
+--- Page 30 ---
+Task 
+Management 
+Services
+These 
+services are 
+found in 
+os_task.c 
+and they all 
+start with 
+OSTask???().
+Week 3 – Real Time Operating Systems
+See uC/OS-III API Reference Manual for the complete description!
+30
+
+--- Page 31 ---
+Task States 
+From User 
+Point of View
+From a user point of view a 
+task can be in any of five 
+states as shown in this state 
+diagram:
+(1) …
+(2) …
+(3) …
+(4) …
+(5) …
+Week 3 – Real Time Operating Systems
+31
+
+--- Page 32 ---
+How uC/OS-III 
+Manages CPU 
+Execution 
+Time?
+Explain …
+
+--- Page 33 ---
+Week 3 – Real Time Operating Systems
+Task Control Block (TCB)
+• TCB is a data structure that is part of os.h and used by the 
+kernel to keep all the information about a task
+• Each task requires its own TCB
+• The user assigns the TCB in user memory space (RAM)
+• The address of the TCB is provided to uC/OS-III kernel 
+when calling task related services (i.e., OSTask???() )
+• The TCB data structure has a long list of fields (See 
+Reference manual pp. 97); however, important fields to 
+notice in the TCB data structure are:
+• .StkPtr …
+• .PendOn …
+• .TaskState …
+• .Prio…
+• .TS …
+33
+
+--- Page 34 ---
+Week 3 – Real Time Operating Systems
+34
+
+--- Page 35 ---
+Internal Tasks
+• During initialization, μC/OS-III creates between 0 and 4 
+internal tasks depending on configuration constants found in 
+os_cfg.h:
+• Idle task: OS_IdleTask() – enabled by: OS_CFG_TASK_IDLE_EN
+• The priority of the idle task is always set to OS_CFG_PRIO_MAX-1
+• It runs when no other tasks are ready to run …
+• Tick task: OS_TickTask() – enabled by: OS_CFG_TASK_TICK_EN
+• Statistics task: OS_StatTask() – enabled by: OS_CFG_TASK_STAT_EN
+• Timer task: OS_TmrTask() – enabled by: OS_CFG_TMR_EN
+Week 3 – Real Time Operating Systems
+35
+
+--- Page 36 ---
+The Tick Task
+• Every RTOS will require a periodic time source called clock tick or system tick
+• OS_TickTask() is a task created by μC/OS-III and its priority is configurable, it’s 
+priority should be set high, but lower than your most important tasks
+• OS_TickTask() is a periodic tasks, waits for signals from the Tick ISR and is used to:
+• keep track of tasks waiting for time to expire or,
+• for tasks that are pending on kernel objects with a timeout
+(1) …
+(2) …
+(3) …
+(4) …
+Week 3 – Real Time Operating Systems
+36
+
+--- Page 37 ---
+Tick Management
+• The TickISR () calls OSTimeTick () which 
+does most of the work.
+• OS maintains a tick list that is split into 
+two separate ‘delta-lists’
+• (1) This list contains all the tasks that are 
+waiting for time to expire
+• (2) This list contains all the tasks that are 
+pending on an object with a timeout
+• Tasks are automatically inserted in the 
+proper tick list when the application 
+calls OSTimeDly???() Or OS???Pend() 
+functions.
+Week 3 – Real Time Operating Systems
+37
+
+--- Page 38 ---
+Example of Tick Task Working
+• Assume that the OSTickListDly 
+list is completely empty
+• Then a task uses OSTimeDly() 
+as follows:
+:
+OSTimeDly(10, OS_OPT_TIME_DLY, &err);
+:
+• This task will be the first task 
+entered in the tick list as 
+shown
+Week 3 – Real Time Operating Systems
+38
+
+--- Page 39 ---
+Example Cont…
+• If the next task to run will also call OSTimeDly() “before” the next tick 
+arrives, then the list will update as shown:
+:
+OSTimeDly(7, OS_OPT_TIME_DLY, &err);
+ENGG4420: Developed by Radu Muresan, F22
+146
+Note: the timeout for the last task 
+in the list is the sum of the previuos 
+values in the .TickRemain fields.
+The standard method used for the Tick task is to 
+wake up OS_CFG_TICK_RATE_HZ times per 
+second as triggered by the Tick ISR.
+•
+Then, the tick task increments OSTickCtr
+by one, and
+•
+Updates the timeout and delay tick lists, 
+reading all tasks that have an expired delay or
+timeout
+Week 3 – Real Time Operating Systems
+39
+
+--- Page 40 ---
+Week 3 – Real Time Operating Systems
+Dynamic Tick Mode
+• OS offers a dynamic tick mode where the Tick task is not run 
+periodically every tick, this mode will save power consumption
+• In this mode the Tick task is awakened when the smallest needed 
+delay of any task of either tick list has elapsed.
+• This minimum delay is called a tick step
+• The Tick Step, is calculated:
+• every time a task needs to be delayed,
+• every time a task pends on a kernel object with a timeout and
+• every time the Tick task is run.
+• This Tick Step is applied to the Dynamic tick timer by calling the 
+BSP_OS_TickNextSet() function
+40
+
+--- Page 41 ---
+Week 3 – Real Time Operating Systems
+Statistics Task
+• This is an optional task and is controlled by a compile-time 
+configuration constant OS_CFG_STAT_TASK_EN defined in 
+os_cfg.h
+• This task provides run-time statistics such as overall CPU 
+utilization, per-task CPU utilization, and per-task stack usage.
+• As of V3.03.00, CPU utilization is represented as an integer from 
+0 to 10,000 (0.00% to 100.00%).
+• HOMEWORK: Study the use of the statistics task (See reference 
+ebook pp. 121-124)
+41
+
+--- Page 42 ---
+Week 3 – Real Time Operating Systems
+Timer Task: OS_TmrTask()
+• This is also an optional task enabled at compile time; and it is a periodic 
+task controlled by TickISR(), but updated at a lower rate.
+• Its priority should be set to a low to medium in regard to the other tasks
+• Timers are countdown counters that perform an action when the 
+counter reaches zero.
+• The action is provided by the user through a callback function.
+• A callback function is a function that the user declares and that will be 
+called when the timer expires.
+• The callback can thus be used to turn on or off a light, a motor, or perform 
+whatever action needed. It is important to
+• Note that the callback function is called from the context of the timer 
+task
+42
+
+--- Page 43 ---
+Week 3 – Real Time Operating Systems
+uC/OS-III Ready List
+• The uC/OS-III kernel maintains a ready list which holds all the 
+tasks that are ready to execute
+• The ready list consists of two parts:
+• A bitmap which contains the priority levels of the ready tasks
+• A table containing pointers to all the tasks ready.
+43
+
+--- Page 44 ---
+Bitmap of 
+Priority Levels
+• The width of the bitmap 
+table depends on the data 
+type CPU_DATA that is 
+found in cpu.h, which can 
+either be 8-, 16-, or 32-bits.
+• The example here is an 8- 
+bit bitmap table
+• Tasks ready-to-run at a 
+given priority level will have 
+their bit set (i.e., 1) in the 
+bitmap table
+Week 3 – Real Time Operating Systems
+44
+
+--- Page 45 ---
+Priority 
+Level 
+Access
+Homework: 
+Think about 
+a numeric 
+example for 
+this function 
+See pp. 132
+Week 3 – Real Time Operating Systems
+152
+45
+
+--- Page 46 ---
+The Ready List 
+Structure
+• The ready list is an array called 
+OSRdyList[] containing 
+OS_CFG_PRIO_MAX entries 
+with each entry defined by the 
+data type OS_RDY_LIST (see 
+os.h)
+• The OS_RDY_LIST entry 
+consists of three fields:
+• Entries …
+• TailPtr and HeadPtr …
+• The index in the array …
+Week 3 – Real Time Operating Systems
+153
+46
+
+--- Page 47 ---
+After 
+OSInit()
+Homework: 
+See Example of 
+adding a task 
+in the ready 
+list
+pp. 136-137
+Week 3 – Real Time Operating Systems
+154
+47
+
+--- Page 48 ---
+Week 3 – Real Time Operating Systems
+Scheduling in uC/OS-III
+• The scheduler is also called dispatcher
+• Preemptive priority based kernel means that if an event occurs,
+and that event makes a more important task ready-to-run, then 
+uC/OS-III will immediately give control of the CPU to that task
+• We have some typical scenarios here:
+Case 1: a task signals or sends a message to a higher-priority task:
+• The current task is suspended, and the higher priority task will run 
+Case 2: an Interrupt Service Routine (ISR) signals or sends a message to a 
+higher priority task than the one interrupted:
+• The interrupted task remains suspended and the new task runs
+• Here, μC/OS-III handles event posting from interrupts using two 
+different methods: Direct and Deferred Post
+48
+
+--- Page 49 ---
+Preemptive Scheduling Workings
+• (1) …?
+• (2) …
+• (3) …
+• (4) …
+• (5) …
+• (6) …
+• (7) …
+• (8) …
+• (9) …
+• (10) …
+• (11) …
+Week 3 – Real Time Operating Systems
+49
+
+--- Page 50 ---
+Week 3 – Real Time Operating Systems
+Scheduling Points
+1.
+A task signals or sends a message to 
+another task: OS???Post()
+2.
+A task calls OSTimeDly() or 
+OSTimeDlyHMSM()
+3.
+A task waits for an event to occur, and 
+the event has not yet occurred: 
+OS???Pend()
+4.
+If a task aborts a pend -- by calling 
+OS???PendAbort()
+5.
+If a task is created or deleted
+6.
+If a kernel object is deleted -- an event 
+flag group, a semaphore, a message 
+queue, or a mutual exclusion 
+semaphore.
+8.
+A task changes the priority of itself or 
+another task.
+9.
+A task suspends itself by calling 
+OSTaskSuspend()
+10. A task resumes another task that was 
+suspended by OSTaskSuspend()
+11. At the end of all nested ISRs -- the 
+scheduling is performed by OSIntExit
+12. The scheduler is unlocked by calling 
+OSSchedUnlock()
+13. A task gives up its time quanta by 
+calling OSScedRoundRobinYield()
+14. The user calls OSSched …
+Scheduling occurs at scheduling points and nothing special must be done in the application  
+code since scheduling occurs automatically based on conditions happening at scheduling points:
+50
+
+--- Page 51 ---
+Round-Robin or Time Slicing Scheduling
+• When more tasks have 
+the same priority: a 
+task will run for a Time 
+Quanta 
+ round-robin
+• A task can give up 
+voluntarily its Time 
+Quanta – Yielding
+• (1) …; (8)
+• OS_SchedRoundRobin() 
+is the code used to 
+select the task to run.
+Week 3 – Real Time Operating Systems
+51
+
+--- Page 52 ---
+Scheduling Internals
+• Scheduling is 
+performed by two 
+functions:
+• OSSched(): called by 
+task level code
+• OSIntExit(): called by 
+ISR level code
+• Data structures used 
+by the scheduler are:
+• The priority ready 
+bitmap table
+• The array ready list
+Week 3 – Real Time Operating Systems
+52

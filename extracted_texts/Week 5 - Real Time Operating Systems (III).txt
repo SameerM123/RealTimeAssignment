@@ -1,0 +1,662 @@
+
+--- Page 1 ---
+Synchronization
+• How can tasks synchronize their activities with interrupt service
+routines or other tasks?
+• When an ISR executes, it can signal a task telling the task that an
+event of interest has occurred …
+• Servicing interrupting devices from task level is preferred since it
+reduces the amount of time that interrupts are disabled, and the
+code is easier to debug
+• uC/OSIII provides two main mechanisms for synchronization:
+1. Use of counting semaphores
+2. Use of event flags
+Week 5 - Real Time Operating Systems (III)
+220
+
+--- Page 2 ---
+Synchronization Using Counting Semaphores
+• Semaphores are best used to synchronize an ISR to a task, or 
+synchronize a task with another task
+• The N value next to the flag indicates that the semaphore can 
+accumulate events or credits
+When used in 
+this context the 
+semaphores 
+are drawn as a 
+flag!
+Week 5 - Real Time Operating Systems (III)
+221
+We will focus in this topic on the functions: 
+OSSemCreate(), OSSemPend(), OSSemPost()
+
+--- Page 3 ---
+Week 5 - Real Time Operating Systems (III)
+222
+Synchronization Techniques Using 
+Semaphores
+• Unilateral rendez-vous using a semaphore: used when no data
+needs to be exchanged, but an indication that an ISR or task has 
+occurred
+• Credit tracking: allows the tasks to execute without losing track 
+of the events
+• Multiple tasks waiting on a semaphore: broadcasting is used to
+synchronize multiple tasks and tell that all task waiting on the 
+semaphore be made ready-to-run not only the HPT waiting
+• Usage of task semaphore: uC/OSIII allows built in task
+semaphores that can be used in similar way for synchronization 
+as the semaphore object
+
+--- Page 4 ---
+Unilateral Rendez-
+Vous
+• Unilateral rendez-vous is used 
+when a task initiates an I/O 
+operation and waits for a 
+semaphore to be posted.
+• The task that waits synchronizes 
+with an ISR or another task
+• The rendez-vous process is 
+shown in the task diagram …
+Week 5 - Real Time Operating Systems (III)
+223
+
+--- Page 5 ---
+ISR and Task Code 
+for Rendez-Vous
+• (1) … in this process the task just 
+needs to call the function 
+OSSemPend(), which will return 
+when the event occurs …
+• (7) … the task waiting for the 
+semaphore will execute when the 
+event occurs assuming it is the HPT 
+ready to run …
+• (11) …
+Week 5 - Real Time Operating Systems (III)
+224
+
+--- Page 6 ---
+Credit Tracking
+• A counting semaphore remembers 
+how many times was signaled
+• When the task waiting becomes the 
+HPT ready-to-run task, it will execute 
+without blocking until all accumulated 
+counts expire.
+• (1), …
+• (2), (3) …
+• (4), (5), (6) …
+• (7), …
+• (8), (9) …
+• …
+• (16), (17) …
+Week 5 - Real Time Operating Systems (III)
+225
+26
+
+--- Page 7 ---
+Multiple Tasks Waiting on a Semaphore
+• In general, the HPT ready to run
+can execute after a post 
+operation
+• Or, we can broadcast to all task
+using OS_OPT_POST_ALL as an 
+option
+• Broadcasting is a technique used 
+to synchronize multiple tasks.
+• If some tasks waiting on the
+same semaphore do not want to
+synchronize, we can resolve this
+problem by combining 
+semaphores and event flags.
+Week 5 - Real Time Operating Systems (III)
+226
+27
+
+--- Page 8 ---
+Semaphore Internals 
+(for synchronization)
+• A semaphore is a kernel 
+object as defined by the 
+OS_SEM data type, which is 
+derived from the structure 
+os_sem (see os.h)
+• Notice the fields utilized in 
+building a semaphore 
+object
+• (1) …
+• …
+Semaphores must be created OSSemCreate(…) 
+before they can be used by an application
+A task waits for a signal from an ISR or another task 
+by calling OSSemPend(…)
+Week 5 - Real Time Operating Systems (III)
+227
+To signal a task (either from an ISR or a task), simply 
+call OSSemPost(…); you can post to only 1 task or 
+more by specifying the appropriate parameter
+28
+
+--- Page 9 ---
+Task Semaphores
+• In uC/OS-III each task has its own semaphore built in and cannot be 
+disabled at compile time as can other services; its default value is 0
+• A task can pend on its semaphore, and other tasks or ISR can post if your 
+code knows which task to signal when the event occurs
+Task semaphore services in μC/OS-III start with the 
+OSTaskSem???() prefix
+Week 5 - Real Time Operating Systems (III)
+228
+29
+
+--- Page 10 ---
+Bilateral Rendez-Vous –
+Task Synchronization
+• The task semaphore initial value 
+is zero
+• An ISR or a task can signal a task 
+by calling OSTaskSemPost()
+• Two tasks can synchronize their 
+activities by using two task 
+semaphores in a bilateral way
+OSTaskSemPend()
+Week 5 - Real Time Operating Systems (III)
+229
+210
+
+--- Page 11 ---
+Bilateral Rendez-Vous Code
+Week 5 - Real Time Operating Systems (III)
+230
+211
+
+--- Page 12 ---
+Event Flags
+• Event flags are used when 
+a task needs to 
+synchronize with the 
+occurrence of multiple 
+events
+• (1) … event flag group is a 
+kernel object of type 
+OS_FLAG_GRP and 
+consists of a series of bits
+• (2) … functions call types …
+• (3) … tasks waiting …
+• (4) … wait type …
+Enabled by setting the configuration constant 
+OS_CFG_FLAG_EN to DEF_ENABLED in os_cfg.h.
+“All”
+“Any”
+Week 5 - Real Time Operating Systems (III)
+231
+
+--- Page 13 ---
+Event Group Flag Functions
+Week 5 - Real Time Operating Systems (III)
+232
+
+--- Page 14 ---
+Using Event Flags
+Example of event 
+flag setup:
+bit #0 -> 
+temperature sensor 
+is too low,
+bit #1 -> low battery 
+voltage,
+bit #2 -> a switch
+was pressed, etc. 
+The code (tasks or 
+ISRs) that detects 
+these conditions 
+would set the 
+appropriate event 
+flag by calling 
+OSFlagPost().
+The task(s) that 
+would respond to 
+those conditions 
+would call 
+OSFlagPend()
+Week 5 - Real Time Operating Systems (III)
+233
+
+--- Page 15 ---
+Event Flags 
+Applications
+s
+Event flags are generally used 
+for two purposes: status and 
+transient events.
+1. Used for status events
+• status information events are 
+monitored by other tasks by 
+using non-blocking wait calls.
+2. Used for transient events
+• Task waiting for transient event 
+will typically block waiting for 
+any of those events to occur 
+and “consume” the event
+Week 5 - Real Time Operating Systems (III)
+234
+
+--- Page 16 ---
+Synchronizing Multiple Tasks –Broadcasting
+Week 5 - Real Time Operating Systems (III)
+235
+Problem: multiple task rendez-vous.
+However, some of the tasks
+synchronized might not be waiting for
+the semaphore when the broadcast is 
+performed.
+Solution: combine semaphores and flags
+• (1) Each task that needs to
+synchronize at the rendez-vous needs
+to set an event flag bit and specify
+OS_OPT_POST_NO_SCHED, scheduler 
+is not called on this post functions.
+• (2) … wait for semaphore …
+• (3) … wait for all task to be ready …
+• (4) … broadcast to the semaphore …
+
+--- Page 17 ---
+ENGG4420: Developed by Radu Muresan, F22
+236
+Advanced Synchronization
+• Monitor: an advanced synchronization mechanism.
+• It consists of a state variable and a list of waiting tasks.
+• A task can wait for a specific condition. This condition is evaluated, or 
+checked, every time the monitor is changed.
+• After a monitor is created with OSMonCreate(), tasks can operate 
+it using the OSMonOp() function.
+• Monitor operation uses two callbacks and their return values.
+• The callbacks are known as the enter callback and the evaluation 
+callback.
+• The enter callback is responsible for blocking the calling task and the 
+evaluation callback is responsible for readying a waiting task.
+Week 5 - Real Time Operating Systems (III)
+
+--- Page 18 ---
+Operation  
+of a 
+Monitor
+ENGG4420: Developed by Radu Muresan, F22
+237
+Week 5 - Real Time Operating Systems (III)
+
+--- Page 19 ---
+ENGG4420: Developed by Radu Muresan, F22
+238
+Week 5 - Real Time Operating Systems (III)
+
+--- Page 20 ---
+ENGG4420: Developed by Radu Muresan, F22
+239
+Week 5 - Real Time Operating Systems (III)
+
+--- Page 21 ---
+ENGG4420: Developed by Radu Muresan, F22
+240
+Homework
+• Study the examples related to monitors from the reference 
+manual
+Week 5 - Real Time Operating Systems (III)
+221
+
+--- Page 22 ---
+Week 5 - Real Time Operating Systems (III)
+241
+Inter-Task Communication, Message Passing
+• How do we communicate information to other tasks?
+• Ways to resolve inter-task communication:
+1. Global data … here we need to ensure exclusive access…
+2. Sending messages – messages can be sent to an intermediate 
+object called a message queue or directly to a tasks since uC/OS-
+III implements built in task message queue
+• What is a message?
+• A message consists of a pointer to data, a variable containing the 
+size of the data pointed to, and a timestamp
+• The message contents must always remain in scope since the data 
+is actually sent by reference instead of by value.
+
+--- Page 23 ---
+Message Queue
+A message queue is a kernel object allocated by the 
+application
+• A message queue must be created first
+• Multiple tasks can wait on a message queue
+Week 5 - Real Time Operating Systems (III)
+242
+
+--- Page 24 ---
+Multiple Tasks Waiting for a Message Queue
+ENGG4420: Developed by Radu Muresan, F22
+243
+• When a message is sent to the message queue, what task will receive the 
+message??
+• The sender can broadcast a message to all tasks waiting on the message 
+queue.
+• In this case, if any of the tasks receiving the message from the broadcast has a higher
+priority than the task sending the message it will execute after the message was 
+posted
+Week 5 - Real Time Operating Systems (III)
+224
+
+--- Page 25 ---
+Task Message Queue
+• A message queue is built into each task and a user can send messages 
+directly to a task
+• This feature can be more efficient than using a separate message queue 
+object
+• Setting OS_CFG_TASK_Q_EN to DEF_ENABLED in os_cfg.h enables task 
+message queue services
+ENGG4420: Developed by Radu Muresan, F22
+244
+Week 5 - Real Time Operating Systems (III)
+225
+
+--- Page 26 ---
+Example of Bilateral Rendez-Vous Using 
+Message Queue
+a  
+n
+s
+• Two tasks can synchronize
+their activities by using two 
+message queues
+• Each message queue holds
+maximum of one message i 
+this process
+• Each task has its rendez-vou 
+point:
+• Where it sends a message to
+the other task and waits for a
+message to come from that 
+task
+• Notice the utilization of two 
+queues
+Week 5 - Real Time Operating Systems (III)
+245
+226
+
+--- Page 27 ---
+Task-Message  
+Queues to 
+Perform a 
+Bilateral 
+Rendez-Vous
+ENGG4420: Developed by Radu Muresan, F22
+246
+Week 5 - Real Time Operating Systems (III)
+227
+
+--- Page 28 ---
+Flow Control
+• Task-to-task communication can
+involve data transfers such that
+one task produces data while the 
+other consumes it.
+• Due to time differences in
+producing and processing times
+it is possible for the producer to 
+overflow the message queue
+• Specifically, if a higher-priority task 
+preempts the consumer.
+• Solutions: add flow control in the 
+process as shown …?
+• Message queue and counting 
+semaphore
+• Built in task objects
+Message queue and counting semaphore solution
+Week 5 - Real Time Operating Systems (III)
+247
+228
+
+--- Page 29 ---
+Flow Control with Counting Semaphore
+ENGG4420: Developed by Radu Muresan, F22
+248
+Week 5 - Real Time Operating Systems (III)
+229
+
+--- Page 30 ---
+Flow Control with 
+Built in Task Objects
+In this case, OSTaskSemSet()
+must be called immediately after
+creating the task to set the value
+of the task semaphore to the
+same value as the maximum 
+number of allowable messages in 
+the task message queue
+ENGG4420: Developed by Radu Muresan, F22
+249
+Week 5 - Real Time Operating Systems (III)
+230
+
+--- Page 31 ---
+Keeping the Data 
+in Scope
+Week 5 - Real Time Operating Systems (III)
+250
+• In the case of inter-task communications using message 
+queues, the messages are in form of pointer so,
+• the data must remain static until the receiver of the data 
+completes its processing
+• The sender must not touch the sent data
+• Solution: use the fixed-size memory partition manager 
+provided with OS to dynamically allocate and free memory 
+blocks used to pass the data
+• Example: UART device sends messages in packet format
+• (1) … a UART generates an interrupt … UART ISR analyzes
+the character for start-of-packet, end-of-packet or packet
+body character
+• (2): … start-of-packet … a new buffer is obtained …
+• (3) … packet character… place the byte in the buffer …
+• (4) … end-of-packet … post the address of the buffer …
+• (5) … when the Rx task is HPT, retrieve the packet …
+• (6) … after Rx task finished, return the buffer …
+231
+
+--- Page 32 ---
+UART_ISR
+pseudo-
+code
+Week 5 - Real Time Operating Systems (III)
+251
+232
+
+--- Page 33 ---
+Services for 
+Message 
+Queues and 
+Task 
+Message 
+Queues
+Week 5 - Real Time Operating Systems (III)
+252
+
+--- Page 34 ---
+Example of Using 
+Message Queue
+• Application: RPM
+measurements on a 
+rotating wheel
+(1) … wheel rotates … 
+(2): … a sensor is used to
+detect the passage of a hole
+in the wheel …
+(3) … 32-bit input capture …
+(4)… ISR reads the counter and calculates: ΔCounts = Current Counts – Previous Counts … 
+(5)-(6) … ΔCounts are sent to a message queue … in this case cast ΔCounts to a pointer … 
+(7): … RPM measurement task calculates: RPM = 60 * (Reference Frequency)/(Δcounts) …
+(8) … other metrics such as average RPM, max RPM, etc. can be calculated …
+Week 5 - Real Time Operating Systems (III)
+253
+
+--- Page 35 ---
+Pseudo  
+Code 
+main ()
+Week 5 - Real Time Operating Systems (III)
+254
+235
+
+--- Page 36 ---
+Code  
+ISR
+Week 5 - Real Time Operating Systems (III)
+255
+236
+
+--- Page 37 ---
+Code  
+Task
+Week 5 - Real Time Operating Systems (III)
+256
+237
+
+--- Page 38 ---
+Message Queue for Clients And Servers 
+Application
+• Here, a task (the server) is used to monitor error conditions that are 
+sent to it by other tasks or ISRs (clients) …
+• When the clients detect error conditions, they send the message 
+error through a message queue.
+Week 5 - Real Time Operating Systems (III)
+257
+238
+
+--- Page 39 ---
+Message Queue 
+Internals
+A message consists of:
+• a pointer to actual data,
+• a variable indicating the size of the 
+data being pointed to and
+• a timestamp indicating when the
+message was sent.
+• μC/OS-III maintains a pool of free OS_MSGs.
+• The total number of available messages in the pool is determined by the 
+value of OS_CFG_MSG_POOL_SIZE found in os_cfg_app.h.
+• When μC/OS-III is initialized, OS_MSGs are linked in a single linked list
+• See the reference manual for the complete data structure for queues!
+Week 5 - Real Time Operating Systems (III)
+258
+239
+
+--- Page 40 ---
+Week 5 - Real Time Operating Systems (III)
+259
+Homework
+• Use the RPM program example from the lecture notes to 
+build new applications such as: measure temperature, 
+control the speed of a motor, measures the energy 
+consumption of a device by measuring current consumption 
+and voltage at a rate of 40 us, etc.
+• Provide the task diagram similar to the one in Slide 23
+• Provide the uC/OS-III code functionality for the application
+• Note, this type of application could be a good test problem 
+for the final exam
+
+--- Page 41 ---
+Memory Management
+• uC/OS-III provides an alternative to malloc() 
+and free() by allowing an application to obtain 
+fixed-sized memory blocks from a partition 
+made from contiguous memory area
+• All memory blocks are the same size, and the 
+partition contains an integral number of blocks.
+• Allocation and deallocation of these memory blocks 
+is performed in constant time and is deterministic.
+• The partition itself is typically allocated 
+statically (as an array), but can also be allocated 
+by using malloc() as long as it is never freed
+Week 5 - Real Time Operating Systems (III)
+260
+
+--- Page 42 ---
+Multiple Memory Partitions
+• More than one memory 
+partition may exist in one 
+application
+• An application can obtain 
+memory blocks of different sizes 
+based upon requirements.
+• But, a specific memory block 
+must always be returned to the 
+partition that it came from.
+ENGG4420: Developed by Radu Muresan, F22
+261
+Week 5 - Real Time Operating Systems (III)
+242
+
+--- Page 43 ---
+Using Memory Partitions
+• Memory management services are enabled at compile time by setting 
+OS_CFG_MEM_EN to 1 in os_cfg_h
+• We must create a memory partition first before we can use it
+• OSMemCreate() can only be called from task-level code, but 
+OSMemGet() and OSMemPut() can be called from ISR as well
+Week 5 - Real Time Operating Systems (III)
+262
+243
+
+--- Page 44 ---
+Example of Using Dynamic 
+Memory Allocation Partition
+• (1) … inputs read and analyzed …
+• (2) … obtain a memory block …
+• (3) … from the error message …
+• (4) … post the error message …
+• (5) … pend on error messages …
+• (6) … analyze the message … perform 
+actions required …
+• (7) … return the memory block …ENGG4420: Developed by Radu Muresan, F22
+263
+Application: A task monitors the 
+value of analog inputs and sends an 
+error message to an error handling 
+task if any of the analog inputs 
+exceed a threshold.
+• Error handling is centralized.
+Week 5 - Real Time Operating Systems (III)
+244
+
+--- Page 45 ---
+Task Waiting for 
+a Memory Block
+Week 5 - Real Time Operating Systems (III)
+264
+• What if a partition runs out of blocks??
+• μC/OS-III does not support pending on 
+partitions … add a counting semaphore
+• (1) … obtain the partition semaphore … 
+then call OSMenGet() …
+• (2) … return the block and post to the 
+semaphore …
+• Homework: present a complete uC/OS-
+III functional code for this application. 
+Use the example pp. 318 and the 
+memory partition examples (pp 327 to 
+331). You need to show the tasks and 
+all uC/OS-III function calls and objects 
+utilized.
+
+--- Page 46 ---
+Week 5 - Real Time Operating Systems (III)
+265
+uC/OS-III Homework
+1. Study all uC/OS-III topics, the examples and the posted homework 
+throughout the lecture slides
+2. Understand the initialization and start-up for using uC/OS-III and how 
+to use tasks and objects (semaphores, mutex, flags, monitors, queues)
+3. Understand task states, tick usage, interrupts, synchronization, inter-
+task communication memory management
+4. Understand priority inversion protocol and deadlock,
+5. Usage of: semaphore, mutex, event flags, queue, memory partitions
+6. Complex applications using memory allocation services should be well 
+understood well and how to utilize the uC/OS-III functions to build 
+such applications!!!

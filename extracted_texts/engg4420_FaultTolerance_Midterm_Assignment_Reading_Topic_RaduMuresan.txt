@@ -1,0 +1,492 @@
+
+--- Page 1 ---
+IN TRADITIONAL SYSTEMS safety and reliability are 
+normally considered to be independent issues --
+there are traditional systems that are safe and 
+unreliable and vice-versa. 
+EXAMPLE 1: a word processing software may not be very 
+reliable but is safe but a failure to the software does not usually 
+cause any significant damage or financial loss. EXAMPLE 2: a 
+hand gun can be unsafe but reliable (i.e, a hand gun rarely fails). 
+However, if it fails for some reason, it can misfire or even 
+explode and cause damage.
+IN REAL-TIME SYSTEMS safety and reliability are 
+coupled together.
+DEFINITIONS:
+If no damage can result when a system enters a fail-safe 
+state just before it fails, then through careful transition to 
+fail-safe state upon a failure, it is possible to turn an 
+extremely unreliable and unsafe system into a safe system.
+•
+FAIL-SAFE STATE of a system is a state which if 
+entered when the system fails, no damage would 
+result. EXAMPLE: the fail-safe state of a word processing 
+program is a state where the document being processed has 
+been saved on the disk.
+1.
+SAFETY-CRITICAL SYSTEM is a system whose failure 
+can cause severe damage. EXAMPLE: the navigation 
+system on-board of an aircraft. In a safety-critical system, the 
+absence of fail-safe states implies that safety can only be 
+ensured through increased reliability.
+2.
+SAFETY AND RELIABILITY
+November-28-12
+10:06 AM
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 25
+  
+
+--- Page 2 ---
+HOW TO ACHIEVE HIGH RELIABILITY?
+For safety-critical systems the issue of safety and 
+reliability become interrelated such that safety can 
+only be ensured through increased reliability. Highly 
+reliable software can be developed by adopting the 
+following techniques:
+ERROR AVOIDANCE. Every possibility of occurrence 
+of errors should be minimized as much as possible 
+during product development. This can be achieved 
+by adopting well-founded software engineering 
+practices and sound design methodologies, etc.
+1.
+ERROR DETECTION AND REMOVAL. In spite of using 
+best available error avoidance techniques, many 
+errors are still possible in the code. By conducting 
+thorough reviews and testing, the errors can be 
+detected and then removed.
+2.
+FAULT-TOLERANCE. It is virtually impossible to make 
+a practical software system entirely error free. Few 
+errors still persist even after carrying out thorough 
+reviews and testing. Therefore, to achieve high 
+reliability, even in situations where errors are 
+present, the system should be able to tolerate the 
+faults and compute the correct results. This is called 
+fault-tolerance. Fault tolerance can be achieved by 
+carefully incorporating redundancy.
+3.
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 26
+  
+
+--- Page 3 ---
+FAULT TOLERANCE IN HARDWARE
+BUILT-IN SELF TEST (BIST). In BIST, the system 
+periodically performs self tests of its components. 
+Upon detection of a failure, the system 
+automatically reconfigures itself by switching out of 
+the faulty component and switching in one of the 
+redundant good components.
+TRIPLE MODULAR REDUNDANCY (TMR). In TMR, 
+three redundant copies of all critical components 
+are made to run concurrently. 
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 27
+  
+
+--- Page 4 ---
+Additional hardware can be used in 2 ways:
+(1) Fault detection, correction, and masking (this is a short 
+term measure) -- multiple hardware units may be assigned 
+to the same task in parallel and their results compared --
+when units become faulty this will show as a disagreement 
+in the results. We can mask the faults with the majority 
+result (if only a minority of the units are faulty). Example. In 
+a chemical plant, the computer is accessible to be repaired and 
+replaced so we are interested in short-term measures to respond 
+to failures.
+(2) Replace the malfunctioning units (this is a long term 
+measure). It is possible for systems to be designed so that 
+spares can be switched in to replace any faulty units. 
+Example: if a computer is used aboard an unmanned deep-space 
+probe it must include sufficient spare modules and self-repair 
+mechanism to sustain long time functionality. 
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 28
+  
+
+--- Page 5 ---
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 29
+  
+
+--- Page 6 ---
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 30
+  
+
+--- Page 7 ---
+The classes may share some elements. Take the 
+largest Pi thus generated. If it has more than         
+elements in it, any of its elements can be chosen as 
+the output of the voter.
+•
+We say Pi is maximal in the sense that there are no 
+other elements that can be added to its set.
+•
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 31
+  
+
+--- Page 8 ---
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 32
+  
+
+--- Page 9 ---
+The pair runs identical software using identical inputs, and 
+compares the output of each task. If the outputs are 
+identical, the pair is functional. If either processor in the 
+pair detects non-identical outputs, that is an indication 
+that at least one of the processors in the pair is faulty.
+•
+The processor that detects this discrepancy switches off 
+the interface to the rest of the system, thus isolating this 
+pair.
+•
+TECHNIQUES FOR AUTOMATIC HARDWARE REPLACEMENT
+STATIC PAIRING is a simple scheme that hardwires 
+processors in pairs and discards the entire pair when one of 
+the processors fails.
+The interface problem can be solved by introducing an interface 
+monitor. The monitor and interface can test each other.
+•
+PROBLEMS WITH THIS SCHEME: 1) if the interface fails; 2) if both 
+processors fail identically and around the same time. 
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 33
+  
+
+--- Page 10 ---
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 34
+  
+
+--- Page 11 ---
+SOFTWARE FAULT-TOLERANCE TECHNIQUES
+Three methods are popular for software fault-
+tolerance: 1) N-version programming technique, 2) 
+recovery block technique, and 3) roll-back recovery.
+Independent teams develop N different versions (value of N 
+depends on the degree of fault-tolerance required) of a 
+software component (module) -- the central idea is that 
+independent teams would commit different types of 
+mistakes, which would be eliminated when the results 
+produced by them are subjected to voting.
+○
+The redundant modules are run concurrently (possibly on 
+redundant hardware);
+○
+The results produced by the different versions of module are 
+subject to voting at run time and the result on which majority 
+of the components agree is accepted.
+○
+N-VERSION PROGRAMMING. This technique is an 
+adaption of the TMR technique for hardware fault-
+tolerance. In the N-version programming technique:
+THE SCHEME is not very successful in achieving fault-
+tolerance and the problem can be attributed to 
+"statistical correlation of failure" -- which means that 
+even with independent teams developing different 
+version the versions tend to fail for identical reasons.
+FOR EXAMPLE it is easy to understand that programmers commit 
+errors in those parts of a problem which they perceive to be 
+difficult -- and what is difficult to one team is difficult to all 
+teams. SO, identical errors remain in the most complex and least 
+understood parts of a software component.
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 35
+  
+
+--- Page 12 ---
+RECOVERY BLOCKS
+In the recovery block scheme, the redundant 
+components are called "try blocks". 
+Each try block computes the same end result as the 
+others but is intentionally written using a different 
+algorithm compared to the other try blocks.
+•
+In this scheme the try blocks are run one after another
+•
+The results produced by a try block are subjected to an 
+acceptance test. If the acceptance test fails then the 
+next try block is tried.
+•
+The process is repeated in a sequence until the result 
+produced by a try block successfully passes the test.
+•
+The scheme can use a common test for all blocks
+•
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 36
+  
+
+--- Page 13 ---
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 37
+  
+
+--- Page 14 ---
+CHECKPOINTING AND ROLL-BACK RECOVERY
+In this scheme as the computation proceeds, the 
+system state is tested each time after some 
+meaningful progress in computation is made. 
+Immediately after a state-check succeeds, the state 
+of the system is backed up on a stable storage
+•
+If the next test does not succeed the system can be 
+made to roll back to the last check-pointed state.
+•
+After a roll back, from a check-pointed state a fresh 
+computation can be initiated.
+•
+This technique is especially useful, if there is a 
+chance that the system state may be corrupted as 
+the computation proceeds.
+•
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 38
+  
+
+--- Page 15 ---
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 39
+  
+
+--- Page 16 ---
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 40
+  
+
+--- Page 17 ---
+We consider a static schedule --
+•
+QUESTION: How a static schedule can respond to 
+hardware failures?
+•
+SOLUTION: ensure to have sufficient reserve capacity
+and a sufficient fast failure response mechanism to 
+continue to meet critical-task deadlines despite a 
+certain number of failures.
+NOTE: the ghost copies do not need to be identical 
+to the primary copies. They can be alternative 
+copies that are simplified and produce poorer 
+results but still acceptable.
+○
+PRACTICAL SOLUTION: use additional ghost copies of 
+tasks, which are embedded into the schedule and 
+activated whenever a processor carrying one of their 
+corresponding primary or previously-activated ghost 
+copies fails.
+FAULT-TOLERANT SCHEDULING (READING)
+November-28-12
+9:38 AM
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 41
+  
+
+--- Page 18 ---
+A set of periodic critical tasks.
+1.
+Multiple copies of each task version are assumed 
+to be executed in parallel with voting or some 
+other error masking mechanism.
+2.
+Existence of the forward-error recovery 
+mechanism to compensate for the loss caused by 
+a task running on a processor that failed.  
+3.
+The fault-tolerant scheduling algorithm produces 
+a schedule meant to find a substitute processor 
+to run the future tasks that were scheduled on a 
+failed processor. 
+4.
+Existence of a non-fault tolerant algorithm for 
+allocation and scheduling. This algorithm can be 
+called as a subroutine by the fault-tolerant 
+procedure. 
+5.
+The allocation/scheduling procedure consists of 
+an assignment part Πa and an EDF scheduling 
+part Πs.
+6.
+ASSUMPTIONS:
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 42
+  
+
+--- Page 19 ---
+DEFINITION OF THE PROBLEM
+PROBLEM: Requirements of the system are:
+Run nc(i) copies of each version (or iteration) of task Ti;
+1.
+Tolerate up to nsust processor failures. 
+2.
+The fault-tolerant schedule must ensure that, after 
+some time for reacting to the failure(s), the system can 
+still execute nc(i) copies of each version of task Ti, 
+despite the failure of up to nsust processors -- the 
+processor failure may occur in any order. 
+•
+THE OUTPUT of the fault-tolerant scheduling algorithm
+will be a ghost schedule, plus one or more primary 
+schedules for each processor.
+•
+If one or more of the ghosts is to be run, the processor 
+runs the ghosts at the time specified by the ghost 
+schedule and shifts the primary copies to make room 
+for the ghosts.
+•
+There are two conditions that ghosts must satisfied in 
+our schedule. These conditions are denoted with C1 
+and C2.
+•
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 43
+  
+
+--- Page 20 ---
+EXAMPLE: Figure below shows an example of a pair 
+of ghost and primary schedules, together with the 
+schedule that the processor actually executes if the 
+ghost is activated. Of course, this pair of ghost and 
+primary schedules is only feasible if, despite the 
+ghost being activated, all the deadlines are met.
+Note that here gi and pi refer to the ghost copy of 
+a task and primary copy of a task, respectively.
+•
+Figure. a) is the ghost schedule; b) is the primary schedule; 
+c) is the schedule that results when g1 is activated.
+FEASIBLE PAIR: a ghost schedule and a primary 
+schedule are said to form a feasible pair if all 
+deadlines continue to be met even if the primary 
+tasks are shifted right by the time needed to execute 
+the ghosts. Ghosts may overlap in the ghost schedule 
+of a processor -- in this case only one ghost copy can 
+be activated.
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 44
+  
+
+--- Page 21 ---
+CONDITIONS FOR SCHEDULING COPIES
+Conditions C1 and C2 for ghosts are the necessary and 
+sufficient conditions for up to nsust processor failures to 
+be tolerated.
+CONDITION C1 -- this condition assures the fault-
+tolerance of  nsust processor failures. Two or more 
+copies (primary or ghost) of the same version must not 
+be scheduled on the same processor.
+Two ghost copies of different tasks may overlap in the 
+schedule of a processor if no other processor carries a 
+copy (either primary or ghost) of the tasks.
+1.
+Primary copies may overlap the ghosts in the schedule 
+only if there is sufficient slack time in the schedule to 
+continue to meet the deadlines of all primary and 
+activated ghost copies on that processor.
+2.
+CONDITION C2 -- this is the condition for describing 
+overlapping requirements. Ghosts are conditionally 
+transparent. That is, they must satisfy the following 
+two properties:
+THEOREM: Conditions C1 and C2 are necessary and 
+sufficient conditions for up to nsust processor failures to 
+be tolerated. (Proof -- See reference book).
+We present two simple fault-tolerant algorithms 
+called FA1 and FA2.
+•
+The theorem above provides the conditions that the 
+fault-tolerant scheduling algorithm must follow in 
+producing the ghost and primary schedule. 
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 45
+  
+
+--- Page 22 ---
+FA1: under FA1, the primary copies will always 
+execute in the positions specified in schedule S (this 
+is the primary schedule), regardless of whether any 
+ghosts happen to be activated, since the ghost and 
+primary schedule do not overlap.
+FA1 ALGORITHM
+RUN       to obtain a candidate allocation of copies to 
+processors. Denote by       and           the primary and 
+ghost copies allocated to processor pi, i = 1, ..., np;
+1.
+RUN                        If the resultant schedule is found to 
+be infeasible the allocation as produced by        is 
+infeasible; return control to          in step 1. 
+Otherwise, record the position of ghost copies (as 
+put out by         ) in ghost schedule Gi, and the 
+position of the primary copies in schedule S.
+2.
+DRAWBACK OF FA1: the primary task are needlessly 
+delayed when the ghosts do not have to be 
+executed -- while all the tasks will meet their 
+deadlines, it is frequently best to complete execution 
+of the tasks early to provide slack time to recover 
+from transient failures.
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 46
+  
+
+--- Page 23 ---
+ALGORITHM FA2
+Run         to obtain a candidate allocation of copies to 
+processors. Denote by         and           the primary and 
+ghost copies allocated to processor pi, i = 1, ..., np. 
+For each processor, pi, do steps 2 and 3.
+1.
+Run                             If the resultant schedule is found 
+to be infeasible, the allocation as produced by           is 
+infeasible; return control to              in step 1. 
+Otherwise, record the position of the ghost copies (as 
+put out by           ) in ghost schedule Gi. Assign static 
+priorities to the primary tasks in the order in which 
+they finish executing, i.e., if primary           completes 
+before                in the schedule generated in this step,  
+2.
+         will have higher priority than            
+Generate primary schedule Si by running             on        
+3.
+with priorities assigned in step 2
+The drawback of FA1 does not occur in FA2 -- here an 
+additional scheduling algorithm                which is a static-
+priority preemptive scheduler is used -- given a set of tasks, 
+each with its own unique static priority,            will schedule 
+them by assigning the processor to execute the highest-
+priority task that has been released but is not yet completed.
+THEOREM. The ghost schedule Gi and primary schedule Si 
+form a feasible pair -- PROOF. The primary tasks will 
+complete no later than the time specified in                         
+even if all the space allocated to ghosts in Gi is, in fact 
+occupied by them.
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 47
+  
+
+--- Page 24 ---
+EXAMPLE (Home Work). Consider the case where a 
+processor p has been allocated ghosts g4, g5, g6, and 
+primaries π1, π2, π3. The release times, execution 
+times, and deadlines are given in table below. 
+CASES TO BE SCHEDULED:
+Suppose that there exists some processor q to which the primary 
+copies of g4 and g5 have been allocated and we cannot overlap 
+g4 and g5 in the ghost schedule of processor p.
+1.
+There is other allocation of the same ghost and primary tasks to 
+p. In this allocation the primary of g4 and g5 cannot be allocated 
+to other processor. As a result, we can overlap g4 and g5. 
+2.
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 48
+  
+
+--- Page 25 ---
+THE END OF CHAPTER 5
+  
+CHAPTER 5 By Radu Muresan University of Guelph Page 49
+  

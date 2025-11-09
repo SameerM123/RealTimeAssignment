@@ -1,0 +1,150 @@
+
+--- Page 1 ---
+WHAT IS IT?
+Conventional cruise 
+control can maintain 
+a steady speed that 
+you set. Adaptive 
+cruise control (ACC) 
+is an enhancement of 
+conventional cruise 
+control. ACC automati-
+cally adjusts the speed 
+of your car to match 
+the speed of the car 
+in front of you. If the 
+car ahead slows down, 
+ACC can automatically 
+match it. Once the car 
+ahead moves out of 
+your lane or accelerates 
+beyond your car’s set 
+speed, your ACC allows 
+your car to return to 
+the speed that you have set. Other than setting your speed, 
+you only need to turn on the system and select your preferred 
+following distance.
+HOW TO USE IT?
+The specific controls will be different depending on your 
+particular car type, but usually you will have to start by setting a 
+cruising speed and a following distance to the car ahead.
+Activation/Deactivation
+Most systems are operated by controls on the steering wheel. 
+You can also intervene at any time by use of the brake or  
+accelerator pedal. 
+Setting the speed
+You can set the speed using the +/- speed button. You can also 
+accelerate as normal until the desired speed is reached. Then 
+you press a button to have the ACC “remember” the speed. 
+Most ACC systems will work down to about 25 MPH.
+Setting the distance
+ACC systems allow you to set a following distance, or time interval, 
+between your car and the car ahead. ACC systems provide various 
+car-to-car distance options, such as: short, medium, or long dis-
+tance. You can change the setting at any time as traffic conditions 
+change. A longer setting is recommended for most driving.
+HOW DOES  
+IT WORK?
+Like standard cruise 
+control systems, ACC 
+keeps your car at the 
+speed you set, as long 
+as there is nothing in 
+front of you. A sensor unit is added to determine  
+the distance between your car and other cars in front you.
+Speed and distance sensors.  
+ACC uses information from two sensors: a distance sensor that 
+monitors the gap to the car ahead and a speed sensor that 
+automatically accelerates and decelerates your car. ACC uses 
+information from these sensors to adjust your speed and  
+maintain the set distance from the car in front of you.
+Looking under the hood: Radar-based systems.  
+Let’s take a look at one ACC technology: radar-based ACC. Some 
+ACC systems send radar waves that reflect off objects in front of 
+your car. Based on the radar reflection, ACC uses distance, direc-
+tion and relative speed to detect if the car is within the distance 
+you set. ACC predicts the path of your car and then decides 
+whether any of the vehicles ahead are within your set distance.
+Understand
+ADAPTIVE CRUISE CONTROL
+
+--- Page 2 ---
+Your ACC system looks directly in front of you for other vehicles. Because it 
+only looks forward, your ACC system may have trouble detecting traffic on 
+curving roads.
+In the image to the right, see how ACC’s field of view works when the road 
+curves. Its view may include traffic in another lane. It may also miss vehicles  
+in your own lane. In situations like this, your ACC system may not react  
+appropriately to the traffic around you. In the example, your ACC system  
+may unexpectedly slow down if it detects the semi in the other lane.
+What would you do?
+Look at scenario in the image to the right. Imagine yourself driving the  
+blue vehicle. Think about the questions shown below.
+CHALLENGE #1: CURVING ROADS
+Experts’ Challenge Answer: 
+How might your ACC system respond?   When Car A goes around the curve, my ACC system 
+may not detect it and the system may unexpectedly accelerate.  
+How should you respond?  If my system accelerates, I should maintain a safe speed manually 
+until the road is straighter.
+ADAPTIVE CRUISE CONTROL
+As you approach the curve, how might                                     How should you respond? 
+your ACC system respond?
+
+--- Page 3 ---
+Just as your ACC system may struggle with curving roads, it may also 
+have trouble on hilly roads. ACC looks straight in front of the vehicle, 
+and can’t bend its view up or down hills (or around curves). The image 
+shows how the system’s field of view may not see everything when on a 
+hilly road, and may respond incorrectly. In the example, your car’s ACC 
+system may not detect Car B, and could unexpectedly speed up.
+What would you do?
+Look at scenario in the image to the right. Imagine yourself driving 
+the blue vehicle. Think about the questions shown below.
+CHALLENGE #2: HILLS
+Experts’ Challenge Answer: 
+How might your ACC system respond?  When Car A goes over the hill, my ACC system may 
+not detect it and unexpectedly accelerate.
+How should you respond?  If my ACC system accelerates, I should disengage ACC and 
+maintain a safe speed manually until the road is less hilly.
+ADAPTIVE CRUISE CONTROL
+As you approach the the top of the hill,                                      How should you respond? 
+how might your ACC system respond?
+
+--- Page 4 ---
+ACC systems detect other vehicles directly in front of you. 
+Because of the system’s field of view, ACC may not detect 
+a vehicle that is in your lane but not directly ahead of your 
+car. This can include vehicles that are merging into or out 
+of your lane. In the example, Car A may be outside of your 
+ACC’s field of view and yet still in front of you.
+What would you do?
+Look at the scenario in the image to the right. Imagine  
+yourself driving the blue vehicle. Think about the  
+questions shown below.
+CHALLENGE #3: MERGING TRAFFIC
+Experts’ Challenge Answer: 
+How might your ACC system respond?  If Car B moves into its field of view too quickly, my ACC system 
+may brake unexpectedly or shut off. 
+How should you respond? I should monitor the system and traffic, and take control manually if necessary.
+ADAPTIVE CRUISE CONTROL
+How might your ACC system respond?                                    How should you respond?
+
+--- Page 5 ---
+ACC systems can help regulate speed in traffic, but they 
+may struggle in heavy traffic. Your ACC system has to de-
+tect a vehicle and also judge its distance and speed. Quick 
+lane changes and braking in heavy traffic situations may 
+cause the system to struggle. In slow traffic, many systems 
+will disengage below a certain speed.
+What would you do?
+Look at the scenario in the image to the right. Imagine  
+yourself driving the blue vehicle. Think about the  
+questions shown below.
+CHALLENGE #4: SLOW AND HEAVY TRAFFIC
+Experts’ Challenge Answer: 
+How might your ACC system behave in this situation? Since many ACC systems are not designed for travel 
+at less than 25 mph, the ACC system may turn off in a slow, heavy traffic scenario,. 
+ACC works best in higher speed conditions and has limitations in slow traffic (e.g., below 25 mph). 
+How should you respond? Use ACC in conditions where you can drive greater than 25 mph. 
+ADAPTIVE CRUISE CONTROL
+How might your ACC system behave in this situation?          How should you respond?
