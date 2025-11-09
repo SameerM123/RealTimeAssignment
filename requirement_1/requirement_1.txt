@@ -1,0 +1,6 @@
+On hilly terrain, an adaptive cruise control system faces a major challenge — the radar or lidar may lose sight of the lead vehicle when going over a crest, causing the system to misinterpret the environment and accelerate unexpectedly. 
+To address this, the proposed design integrates predictive sensing and real-time decision control. The system fuses GPS and digital elevation data with radar and camera inputs to anticipate slope changes ahead. 
+When a steep incline or decline is detected, it activates a “Hill Mode,” where the controller preemptively adjusts throttle and braking to maintain a safe following distance even if the target vehicle becomes temporarily obscured. 
+If sensor confidence drops below a set threshold, the system maintains the current speed instead of accelerating, preventing unsafe behavior. 
+All core control loops operate within 100 milliseconds to meet real-time responsiveness, while lower-priority tasks—such as hill detection and data fusion—run asynchronously and communicate via event flags and shared buffers. 
+This ensures timing predictability and stable operation under varying road conditions. The approach prioritizes safety, reliability, and smooth driver experience, even in challenging hill environments.
